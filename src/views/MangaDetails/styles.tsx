@@ -1,0 +1,131 @@
+import styled from "styled-components";
+
+export const ScrollContainer = styled.ScrollView`
+  flex: 1;
+  background-color: black;
+  height: 100%;
+  padding-bottom: 120px;
+`;
+
+export const Container = styled.View`
+  flex: 1;
+  width: 100%;
+  background-color: black;
+  padding-top: 120px;
+
+  height: 100%;
+
+  justify-content: flex-start;
+`;
+
+export const TopContainer = styled.View`
+  flex-direction: row;
+  width: 100%;
+`;
+
+export const InfoContainer = styled.View`
+  flex: 1;
+  padding: 10px;
+
+  flex-wrap: wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  justify-content: space-evenly;
+`;
+
+export const ImageManga = styled.Image`
+  width: 40%;
+  height: 250px;
+  border-radius: 8px;
+`;
+
+export const TitleManga = styled.Text`
+  font-size: 20px;
+  color: white;
+  font-weight: 600;
+  width: 100%;
+`;
+
+export const MidleContainer = styled.View`
+  flex: 1;
+  padding: 5px;
+  padding-top: 15px;
+`;
+
+export const NormalText = styled.Text`
+  color: gray;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 32;
+`;
+export const NormalTextTop = styled.Text`
+  color: white;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 32px;
+  width: 100%;
+`;
+
+export const TagsContainer = styled.View`
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 20px;
+`;
+
+export const TagsBox = styled.View`
+  border-color: gray;
+  border-radius: 10px;
+  border-width: 1px;
+  padding: 5px;
+  margin: 5px;
+`;
+
+
+export const ChapterBox = styled.Pressable`
+  
+  width:100%;
+  
+  height: 60px;
+  justify-content: space-between;
+  padding: 5px;
+
+
+`
+
+export const ChapterTopBox = styled.View`
+  
+  width: 100%;
+  flex-direction: row;
+
+
+`
+export const ChapterBottomBox = styled.View`
+  
+  width: 100%;
+    flex-direction: row;
+
+
+
+`
+
+export const ChapterTextTop = styled.Text`
+  
+  color: white;
+  padding-right: 5px;
+  font-size: 16px;
+  font-weight: 600;
+
+
+`
+export const ChapterTextBottom = styled.Text`
+  
+  color: gray;
+  padding-right: 10px;
+
+
+`
+
+
+
+
