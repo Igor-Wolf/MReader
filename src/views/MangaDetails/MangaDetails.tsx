@@ -28,6 +28,7 @@ import { GetChapterList, GetMangaDetails } from "./action";
 import { useEffect, useState } from "react";
 import { DateConvert } from "../../utils/convertDate";
 import { CharCount } from "../../utils/caracterCounter";
+import HeaderChapters from "../../components/HeaderChapters";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -85,10 +86,10 @@ export default function MangaDetails() {
 
   return (
     <Container>
-      <HeaderExtention
+      <HeaderChapters
         name={manga.slug}
         navigation={navigation}
-      ></HeaderExtention>
+      ></HeaderChapters>
 
       <ScrollContainer>
         <TopContainer>
@@ -119,7 +120,7 @@ export default function MangaDetails() {
             <ChapterTopBox>
               <ChapterTextTop>Vol.{item.volume}</ChapterTextTop>
               <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
-              <ChapterTextTop>{item.title}</ChapterTextTop>
+              <ChapterTextTop>{item.title && CharCount(item.title)}</ChapterTextTop>
             </ChapterTopBox>
             <ChapterBottomBox>
               <ChapterTextBottom>

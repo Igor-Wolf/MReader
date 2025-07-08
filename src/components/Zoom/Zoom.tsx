@@ -25,7 +25,7 @@ export default function ZoomableImage({
     <Zoomable
       minScale={1}
       maxScale={4}
-      doubleTapScale={3}
+      doubleTapScale={2}
       simultaneousHandlers={simultaneousHandlers}
       isSingleTapEnabled
       isDoubleTapEnabled

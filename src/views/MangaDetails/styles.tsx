@@ -11,7 +11,7 @@ export const Container = styled.View`
   flex: 1;
   width: 100%;
   background-color: black;
-  padding-top: 120px;
+  padding-top: 140px;
 
   height: 100%;
 
@@ -56,7 +56,7 @@ export const NormalText = styled.Text`
   color: gray;
   font-size: 17px;
   font-weight: 600;
-  line-height: 32;
+  line-height: 32px;
 `;
 export const NormalTextTop = styled.Text`
   color: white;

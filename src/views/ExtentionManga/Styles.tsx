@@ -4,13 +4,16 @@ export const Container = styled.View`
   flex: 1;
   width: 100%;
   background-color: black;
-  padding-top: 120px;
+  padding-top: 160px;
   
   justify-content: center;
 `;
 
 export const FlatListContainer = styled.FlatList`
   background-color: black;
-  flex:1
+  flex:1;
   
 `;
+
+
+

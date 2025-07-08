@@ -37,6 +37,86 @@ export const GetAllMangaMangaDex = async (
 
   return [];
 };
+export const GetPopularMangaMangaDex = async (
+  pagination: number,
+  idFont: number
+) => {
+  const page = pagination * 20 - 20;
+
+  const response = await MangaDexApi.get("/manga", {
+    params: {
+      "includes[]": ["author", "artist", "cover_art"],
+      limit: 20,
+      offset: page * 20,
+      // Ordenação
+      "order[followedCount]": "desc", // mais recentemente atualizado
+      
+    },
+  });
+
+  if (response.status === 200) {
+    let mangaList = response.data.data;
+    let returnList: MangaCoverModel[] = [];
+    mangaList.forEach((manga: any) => {
+      const cover = manga.relationships.find(
+        (rel: any) => rel.type === "cover_art"
+      );
+      const fileName = cover?.attributes?.fileName;
+      const imageUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+
+      returnList.push({
+        id: manga.id,
+        idFont: idFont,
+        slug: manga.attributes.title.en ?? "No Title",
+        coverImage: imageUrl,
+      });
+    });
+    return returnList;
+  }
+
+  return [];
+};
+export const GetMangaByNameMangaDex = async (
+  pagination: number,
+  idFont: number,
+  slug: string
+) => {
+  const page = pagination * 20 - 20;
+
+  const response = await MangaDexApi.get("/manga", {
+    params: {
+      title: slug,
+      "includes[]": ["author", "artist", "cover_art"],
+      limit: 60,
+      offset: 0,
+      // Ordenação
+      "order[followedCount]": "desc", // mais recentemente atualizado
+      
+    },
+  });
+
+  if (response.status === 200) {
+    let mangaList = response.data.data;
+    let returnList: MangaCoverModel[] = [];
+    mangaList.forEach((manga: any) => {
+      const cover = manga.relationships.find(
+        (rel: any) => rel.type === "cover_art"
+      );
+      const fileName = cover?.attributes?.fileName;
+      const imageUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
+
+      returnList.push({
+        id: manga.id,
+        idFont: idFont,
+        slug: manga.attributes.title.en ?? "No Title",
+        coverImage: imageUrl,
+      });
+    });
+    return returnList;
+  }
+
+  return [];
+};
 
 export const GetMangaByIDMangaDex = async (
   idManga: string
@@ -118,8 +198,9 @@ export const GetMangaChapterList = async (idChapter: string) => {
   }
 };
 
-export const GetPagesListMangaDex = async (idManga: string): Promise<MangaPage[]> => {
-  
+export const GetPagesListMangaDex = async (
+  idManga: string
+): Promise<MangaPage[]> => {
   try {
     const response = await MangaDexApi.get(`/at-home/server/${idManga}`);
 

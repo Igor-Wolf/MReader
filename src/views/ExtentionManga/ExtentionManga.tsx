@@ -4,7 +4,7 @@ import { Container, FlatListContainer } from "./Styles";
 import { useNavigation } from "@react-navigation/native";
 import HeaderExtention from "../../components/HeaderExtentionFont";
 import CardManga from "../../components/CardManga";
-import { GetAllManga } from "./action";
+import { GetAllManga, GetMangaByName, GetPopularManga } from "./action";
 import { ActivityIndicator, RefreshControl } from "react-native";
 
 export default function ExtentionManga() {
@@ -13,30 +13,75 @@ export default function ExtentionManga() {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchManga = async (page: number) => {
-    
-    const response = await GetAllManga(font.id, page);
-    if (response) {
-      return response;
+  const [mangaList, setMangaList] = useState([]);
+  const [pagination, setPagination] = useState(1);
+  const [operation, setOperation] = useState(1);
+  const [inputText, setInputText] = useState("");
+
+  const fetchManga = async (page: number, operator: number) => {
+    let response = null;
+    switch (operator) {
+      case 1:
+        response = await GetAllManga(font.id, page);
+        break;
+      case 2:
+        response = await GetPopularManga(font.id, page);
+        break;
+      case 3:
+        response = await GetMangaByName(
+          font.id,
+          page,
+          encodeURIComponent(inputText)
+        );
+        break;
+      default:
+        break;
     }
+
+    return response;
   };
 
-  const refreshPage = async () => {
+  const refreshSearch = async () => {
+    setOperation(3);
+
     setRefreshing(true);
-    const response = await fetchManga(1);
+    const response = await fetchManga(1, 3);
     if (response) {
       setMangaList(response);
+      setPagination(1);
+    }
+    setRefreshing(false);
+  };
+
+  const refreshPopular = async () => {
+    setOperation(2);
+
+    setRefreshing(true);
+    const response = await fetchManga(1, 2);
+    if (response) {
+      setMangaList(response);
+      setPagination(1);
+    }
+    setRefreshing(false);
+  };
+  const refreshPage = async () => {
+    setOperation(1);
+    setRefreshing(true);
+    const response = await fetchManga(1, 1);
+    if (response) {
+      setMangaList(response);
+      setPagination(1);
     }
     setRefreshing(false);
   };
 
   const morePages = async () => {
-    const numPage = pagination + 1;
-
-    const response = await fetchManga(numPage);
-    if (isLoadingMore) return;
+    if (isLoadingMore || operation === 3) return;
 
     setIsLoadingMore(true);
+    const numPage = pagination + 1;
+    const response = await fetchManga(numPage, operation);
+
     if (response) {
       setMangaList((prevList) => [...prevList, ...response]);
       setPagination(numPage);
@@ -45,11 +90,7 @@ export default function ExtentionManga() {
     setIsLoadingMore(false);
   };
 
-  const [mangaList, setMangaList] = useState([]);
-  const [pagination, setPagination] = useState(1);
-
   useEffect(() => {
-    
     refreshPage();
   }, [font.id]);
 
@@ -58,14 +99,16 @@ export default function ExtentionManga() {
       <HeaderExtention
         name={font.name}
         navigation={navigation}
+        refreshNew={refreshPage}
+        refreshPopular={refreshPopular}
+        refreshSearch={refreshSearch}
+        setInputText={setInputText}
       ></HeaderExtention>
 
       <FlatListContainer
         data={mangaList}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <CardManga key={item.id} objeto={item} />
-        )}
+        renderItem={({ item }) => <CardManga key={item.id} objeto={item} />}
         numColumns={2}
         horizontal={false}
         refreshControl={

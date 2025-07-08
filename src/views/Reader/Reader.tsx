@@ -35,7 +35,7 @@ export default function Reader() {
         tabBarStyle: {
           backgroundColor: "black", // cor de fundo da barra inferior
           borderTopColor: "black", // remover borda superior, se quiser
-          height: 80, // opcional: altura da barra
+          height: 100, // opcional: altura da barra
         },
       });
     };

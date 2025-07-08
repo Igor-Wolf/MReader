@@ -1,13 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { useSharedValue } from "react-native-reanimated";
+import { configureReanimatedLogger, ReanimatedLogLevel, useSharedValue } from "react-native-reanimated";
 import { ImageContainer } from "./styled";
 import ZoomableImage from "../Zoom/Zoom";
 import { PanGesture } from "react-native-gesture-handler";
 import { MangaPage } from "../../Models/MangaModel";
 
 const { width, height } = Dimensions.get("window");
+
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 export default function Carrousel({ list }: { list: MangaPage[] }) {
   const scrollOffsetValue = useSharedValue(0);
