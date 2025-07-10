@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import {
-  Image,
-  StyleSheet,
-  Dimensions,
-  ActivityIndicator,
-  Text,
-} from "react-native";
+import { StyleSheet, Dimensions, ActivityIndicator, Text } from "react-native";
 import { Zoomable, ZOOM_TYPE } from "@likashefqet/react-native-image-zoom";
 import { Indicator } from "./styled";
+import { Image } from "expo-image";
 
 type ZoomableImageProps = {
   uri: string;
   simultaneousHandlers?: any;
   onInteractionChange?: (zoomed: boolean) => void;
+  showTitleBox: () => void
 };
 
 export default function ZoomableImage({
   uri,
   simultaneousHandlers,
   onInteractionChange,
+  showTitleBox
 }: ZoomableImageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -37,7 +34,9 @@ export default function ZoomableImage({
     <>
       <Indicator>
         {loading && !error && <ActivityIndicator size="large" color="gray" />}
-        {error && <Text style={{ color: "white" }}>Erro ao carregar imagem</Text>}
+        {error && (
+          <Text style={{ color: "white" }}>Erro ao carregar imagem</Text>
+        )}
       </Indicator>
 
       <Zoomable
@@ -52,14 +51,15 @@ export default function ZoomableImage({
         onInteractionEnd={() => onInteractionChange?.(false)}
         onDoubleTap={handleZoom}
         onSingleTap={() => {
-          alert("um pressionamento");
+          showTitleBox();
         }}
+        
       >
         <Image
           key={reloadKey} // força rerender do componente
           source={{ uri: finalUri }}
           style={styles.image}
-          resizeMode="contain"
+          contentFit="contain"
           onLoadStart={() => {
             setLoading(true);
             setError(false);

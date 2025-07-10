@@ -14,6 +14,7 @@ import {
 } from "react-native-reanimated";
 import {
   AuxiPage,
+  BackButton,
   ButtonNextPrevChapter,
   ButtonText,
   ChapterIndicator,
@@ -27,8 +28,7 @@ import {
 import ZoomableImage from "../Zoom/Zoom";
 import { PanGesture } from "react-native-gesture-handler";
 import { MangaPage, ReaderChapters } from "../../Models/MangaModel";
-import Ionicons from '@expo/vector-icons/Ionicons';
-
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -43,6 +43,7 @@ interface CarrouselProps {
   nextPage: () => Promise<void>;
   prevPage: () => Promise<void>;
   mangaAll: ReaderChapters;
+  navigation: any;
 }
 
 export default function Carrousel({
@@ -50,6 +51,7 @@ export default function Carrousel({
   nextPage,
   prevPage,
   mangaAll,
+  navigation,
 }: CarrouselProps) {
   // Estado compartilhado para controle de zoom, usado para desabilitar o scroll do carrossel
   const isZoomedShared = useSharedValue(false);
@@ -57,6 +59,9 @@ export default function Carrousel({
   const [isZoomed, setIsZoomed] = useState(false);
   // Estado para o índice atual do carrossel
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [showTitleBox, setShowTitleBox] = useState(false);
+
   // Referência para o componente Carousel
   const carouselRef = useRef(null);
   // Referência para o manipulador de gesto de pan, para uso com ZoomableImage
@@ -105,13 +110,19 @@ export default function Carrousel({
     }
   }, [list, chapterChanged]);
 
+  const handlePressBackButton = () => {
+    navigation.goBack();
+  };
+
+  const handleShowTitleBox = () => {
+    setShowTitleBox(!showTitleBox);
+  };
+
   // Callback memorizado para lidar com o carregamento da próxima página.
   // Usa isLoadingRef para evitar chamadas duplicadas enquanto uma requisição está pendente.
   const nextPageHandler = useCallback(async () => {
-    
-
-    if (isLoadingRef.current || !mangaAll.nextChapter) {
-      alert("acabou")
+    if (isLoadingRef.current || !mangaAll.nextChapter?.id) {
+      alert("acabou");
       return; // Já está carregando, então não faz nada
     }
     isLoadingRef.current = true; // Define o estado de carregamento para true
@@ -125,12 +136,10 @@ export default function Carrousel({
     } finally {
       isLoadingRef.current = false; // Restaura o estado de carregamento para false
     }
-  }, [nextPage, mangaAll.nextChapter]); // Dependência: nextPage
+  }, [nextPage, mangaAll.nextChapter?.id]); // Dependência: nextPage
   const prevPageHandler = useCallback(async () => {
-    
-
-    if (isLoadingRef.current || !mangaAll.nextChapter) {
-      alert("acabou")
+    if (isLoadingRef.current || !mangaAll.prevChapter?.id) {
+      alert("acabou");
       return; // Já está carregando, então não faz nada
     }
     isLoadingRef.current = true; // Define o estado de carregamento para true
@@ -144,7 +153,7 @@ export default function Carrousel({
     } finally {
       isLoadingRef.current = false; // Restaura o estado de carregamento para false
     }
-  }, [prevPage, mangaAll.nextChapter]); // Dependência: nextPage
+  }, [prevPage, mangaAll.prevChapter?.id]); // Dependência: nextPage
 
   return (
     <>
@@ -153,6 +162,7 @@ export default function Carrousel({
       {extendedList.length > 0 ? (
         <Carousel
           ref={carouselRef}
+          windowSize={3}
           // Define o índice inicial. Começamos em 1 para pular a página 'auxi-start'.
           // Este defaultIndex só é relevante na montagem inicial do Carrossel.
           defaultIndex={1}
@@ -202,12 +212,9 @@ export default function Carrousel({
                     )}
                   </ChapterIndicator>
                   <ButtonNextPrevChapter onPress={prevPageHandler}>
-                    <ButtonText>
-                      Prev Chapter
-                    </ButtonText>
+                    <ButtonText>Prev Chapter</ButtonText>
                     <Ionicons name="arrow-undo" size={24} color="white" />
                   </ButtonNextPrevChapter>
-                  
                 </AuxiPage>
               );
             }
@@ -239,15 +246,11 @@ export default function Carrousel({
                     )}
                     {/* Botões para avançar a página. Chamam nextPageHandler. */}
                     {/* Mantemos múltiplos botões apenas por consistência com o seu código anterior. */}
-
                   </ChapterIndicator>
                   <ButtonNextPrevChapter onPress={nextPageHandler}>
-                    <ButtonText>
-                      Next Chapter
-                    </ButtonText>
+                    <ButtonText>Next Chapter</ButtonText>
                     <Ionicons name="arrow-redo" size={24} color="white" />
-                    </ButtonNextPrevChapter>
-                    
+                  </ButtonNextPrevChapter>
                 </AuxiPage>
               );
             }
@@ -258,6 +261,7 @@ export default function Carrousel({
                 <ZoomableImage
                   uri={item.uri}
                   simultaneousHandlers={panRef} // Permite que o gesto de zoom seja reconhecido junto com o pan do carrossel
+                  showTitleBox={handleShowTitleBox}
                   onInteractionChange={(zoomed: boolean) => {
                     setIsZoomed(zoomed); // Atualiza o estado de zoom
                   }}
@@ -274,23 +278,28 @@ export default function Carrousel({
       )}
 
       {/* Indicador de página, visível apenas nas páginas reais do mangá (excluindo as auxiliares) */}
-      {currentIndex > 0 && currentIndex < extendedList.length - 1 && (
-        <>
-          <ChapterTopBox>
-            <TitleText>{mangaAll?.currentChapter.chapterNumber}</TitleText>
-            {mangaAll?.currentChapter.title && (
-              <TitleText>{mangaAll.currentChapter.title}</TitleText>
-            )}
-          </ChapterTopBox>
+      {currentIndex > 0 &&
+        currentIndex < extendedList.length - 1 &&
+        showTitleBox && (
+          <>
+            <ChapterTopBox>
+              <BackButton onPress={handlePressBackButton}>
+                <Ionicons name="arrow-back" size={30} color="gray" />
+              </BackButton>
+              <TitleText>{mangaAll?.currentChapter.chapterNumber}</TitleText>
+              {mangaAll?.currentChapter.title && (
+                <TitleText>{mangaAll.currentChapter.title}</TitleText>
+              )}
+            </ChapterTopBox>
 
-          <PageIndicatorBox>
-            <PageIndicatorText>
-              {/* Ajusta o cálculo da página para desconsiderar as páginas auxiliares */}
-              {currentIndex} / {extendedList.length - 2}
-            </PageIndicatorText>
-          </PageIndicatorBox>
-        </>
-      )}
+            <PageIndicatorBox>
+              <PageIndicatorText>
+                {/* Ajusta o cálculo da página para desconsiderar as páginas auxiliares */}
+                {currentIndex} / {extendedList.length - 2}
+              </PageIndicatorText>
+            </PageIndicatorBox>
+          </>
+        )}
     </>
   );
 }

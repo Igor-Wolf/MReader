@@ -23,6 +23,7 @@ export default function Reader() {
   const [mangaAll, setMangaAll] = useState<ReaderChapters>(manga);
 
   const fetchMangaPage = async () => {
+
     const responseCurrent = await GetPagesList(
       mangaAll.currentChapter.idFont,
       mangaAll.currentChapter.id
@@ -41,7 +42,7 @@ export default function Reader() {
       }
     }
 
-    if (mangaAll.nextChapter.id) {
+    if (mangaAll.prevChapter.id) {
       const responsePrev = await GetPagesList(
         mangaAll.prevChapter.idFont,
         mangaAll.prevChapter.id
@@ -189,6 +190,7 @@ export default function Reader() {
         prevPage={fetchMangaPrevChapterPage}
         list={currentMangaChapter}
         mangaAll={mangaAll}
+        navigation={navigation}
       ></Carrousel>
     </Container>
   );
