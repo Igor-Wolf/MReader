@@ -73,7 +73,6 @@ export default function MangaDetails() {
 
   const onPressChapter = (chapter: string, indexList: number) => {
     
-    // console.log(`prev:${chapterList[indexList + 1]?.chapter} current: ${chapterList[indexList].chapter} next: ${chapterList[indexList - 1]?.chapter}`)
     
     const objeto = {
       currentChapter: {
@@ -87,15 +86,15 @@ export default function MangaDetails() {
         id: chapterList[indexList - 1]?.id || null,
         idFont: manga.idFont,
         idManga: manga.id,
-        chapterNumber: chapterList[indexList - 1]?.chapter,
-        title: chapterList[indexList -1]?.title
+        chapterNumber: chapterList[indexList - 1]?.chapter || null,
+        title: chapterList[indexList -1]?.title || null
       },
       prevChapter: {
         id: chapterList[indexList + 1]?.id || null,
         idFont: manga.idFont,
         idManga: manga.id,
-        chapterNumber: chapterList[indexList + 1]?.chapter,
-        title: chapterList[indexList +1]?.title
+        chapterNumber: chapterList[indexList + 1]?.chapter || null,
+        title: chapterList[indexList +1]?.title || null
       },
     };
 

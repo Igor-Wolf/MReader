@@ -41,12 +41,14 @@ configureReanimatedLogger({
 interface CarrouselProps {
   list: MangaPage[];
   nextPage: () => Promise<void>;
+  prevPage: () => Promise<void>;
   mangaAll: ReaderChapters;
 }
 
 export default function Carrousel({
   list,
   nextPage,
+  prevPage,
   mangaAll,
 }: CarrouselProps) {
   // Estado compartilhado para controle de zoom, usado para desabilitar o scroll do carrossel
@@ -106,7 +108,10 @@ export default function Carrousel({
   // Callback memorizado para lidar com o carregamento da próxima página.
   // Usa isLoadingRef para evitar chamadas duplicadas enquanto uma requisição está pendente.
   const nextPageHandler = useCallback(async () => {
-    if (isLoadingRef.current && !mangaAll.nextChapter.id) {
+    
+
+    if (isLoadingRef.current || !mangaAll.nextChapter) {
+      alert("acabou")
       return; // Já está carregando, então não faz nada
     }
     isLoadingRef.current = true; // Define o estado de carregamento para true
@@ -120,7 +125,26 @@ export default function Carrousel({
     } finally {
       isLoadingRef.current = false; // Restaura o estado de carregamento para false
     }
-  }, [nextPage]); // Dependência: nextPage
+  }, [nextPage, mangaAll.nextChapter]); // Dependência: nextPage
+  const prevPageHandler = useCallback(async () => {
+    
+
+    if (isLoadingRef.current || !mangaAll.nextChapter) {
+      alert("acabou")
+      return; // Já está carregando, então não faz nada
+    }
+    isLoadingRef.current = true; // Define o estado de carregamento para true
+
+    try {
+      setCurrentIndex(1);
+      await prevPage(); // Chama a função nextPage passada via props, que deve atualizar a 'list' prop
+      setChapterChanged(true); // Ativa a flag para indicar que um novo capítulo foi carregado
+    } catch (error) {
+      console.error("Erro ao carregar a próxima página:", error);
+    } finally {
+      isLoadingRef.current = false; // Restaura o estado de carregamento para false
+    }
+  }, [prevPage, mangaAll.nextChapter]); // Dependência: nextPage
 
   return (
     <>
@@ -157,7 +181,7 @@ export default function Carrousel({
                 <AuxiPage>
                   <ChapterIndicator>
                     <TitleText>Current Chapter</TitleText>
-                    {mangaAll?.currentChapter.title && (
+                    {mangaAll?.currentChapter?.title && (
                       <TitleText>{mangaAll.currentChapter.title}</TitleText>
                     )}
                     {mangaAll?.currentChapter.chapterNumber && (
@@ -168,21 +192,22 @@ export default function Carrousel({
                   </ChapterIndicator>
                   <ChapterIndicator>
                     <TitleText>Prev. Chapter</TitleText>
-                    {mangaAll?.prevChapter.title && (
+                    {mangaAll?.prevChapter?.title && (
                       <TitleText>{mangaAll.prevChapter.title}</TitleText>
                     )}
-                    {mangaAll?.prevChapter.chapterNumber && (
+                    {mangaAll?.prevChapter?.chapterNumber && (
                       <TitleText>
                         ch. {mangaAll.prevChapter.chapterNumber}
                       </TitleText>
                     )}
                   </ChapterIndicator>
-                  <ButtonNextPrevChapter onPress={nextPageHandler}>
+                  <ButtonNextPrevChapter onPress={prevPageHandler}>
                     <ButtonText>
                       Prev Chapter
                     </ButtonText>
                     <Ionicons name="arrow-undo" size={24} color="white" />
-                    </ButtonNextPrevChapter>
+                  </ButtonNextPrevChapter>
+                  
                 </AuxiPage>
               );
             }
@@ -204,10 +229,10 @@ export default function Carrousel({
                   </ChapterIndicator>
                   <ChapterIndicator>
                     <TitleText>Next. Chapter</TitleText>
-                    {mangaAll?.nextChapter.title && (
+                    {mangaAll?.nextChapter?.title && (
                       <TitleText>{mangaAll.nextChapter.title}</TitleText>
                     )}
-                    {mangaAll?.nextChapter.chapterNumber && (
+                    {mangaAll?.nextChapter?.chapterNumber && (
                       <TitleText>
                         ch. {mangaAll.nextChapter.chapterNumber}
                       </TitleText>

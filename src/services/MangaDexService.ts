@@ -224,7 +224,7 @@ export const GetPagesListNextChapterMangaDex = async (
   idChap: string,
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
-  console.log("chablau");
+  
 
   try {
     const responseListChapters = await GetMangaChapterList(idManga);
@@ -238,6 +238,55 @@ export const GetPagesListNextChapterMangaDex = async (
     );
 
     const nextChapter = responseListChapters[currentIndex - 1];
+
+    if (!nextChapter) {
+      console.warn("Nenhum próximo capítulo encontrado.");
+      return null;
+    }
+
+    const response = await MangaDexApi.get(`/at-home/server/${nextChapter.id}`);
+
+    if (response.status === 200) {
+      const { baseUrl, chapter } = response.data;
+      const { hash, data } = chapter;
+
+      const pageList: MangaPage[] = data.map((page: string) => {
+        return `${baseUrl}/data/${hash}/${page}`;
+      });
+
+      return {
+        list: pageList,
+        id: nextChapter.id,
+        title: nextChapter.title,
+        chapterNumber: nextChapter.chapter
+
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar páginas do próximo capítulo:", idChap, error);
+    return null;
+  }
+};
+export const GetPagesListPrevChapterMangaDex = async (
+  idChap: string,
+  idManga: string
+): Promise<NextPrevMangaPage | null> => {
+  
+
+  try {
+    const responseListChapters = await GetMangaChapterList(idManga);
+
+    if (!responseListChapters || responseListChapters.length === 0) {
+      return null;
+    }
+
+    const currentIndex = responseListChapters.findIndex(
+      (item) => item.id === idChap
+    );
+
+    const nextChapter = responseListChapters[currentIndex + 1];
 
     if (!nextChapter) {
       console.warn("Nenhum próximo capítulo encontrado.");
