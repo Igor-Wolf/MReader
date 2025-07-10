@@ -71,10 +71,32 @@ export default function MangaDetails() {
     }
   };
 
-  const onPressChapter = (chapter: string) => {
+  const onPressChapter = (chapter: string, indexList: number) => {
+    
+    // console.log(`prev:${chapterList[indexList + 1]?.chapter} current: ${chapterList[indexList].chapter} next: ${chapterList[indexList - 1]?.chapter}`)
+    
     const objeto = {
-      id: chapter,
-      idFont: manga.idFont,
+      currentChapter: {
+        id: chapter,
+        idFont: manga.idFont,
+        idManga: manga.id,
+        chapterNumber: chapterList[indexList].chapter,
+        title: chapterList[indexList].title
+      },
+      nextChapter: {
+        id: chapterList[indexList - 1]?.id || null,
+        idFont: manga.idFont,
+        idManga: manga.id,
+        chapterNumber: chapterList[indexList - 1]?.chapter,
+        title: chapterList[indexList -1]?.title
+      },
+      prevChapter: {
+        id: chapterList[indexList + 1]?.id || null,
+        idFont: manga.idFont,
+        idManga: manga.id,
+        chapterNumber: chapterList[indexList + 1]?.chapter,
+        title: chapterList[indexList +1]?.title
+      },
     };
 
     navigation.navigate("Reader", { objeto });
@@ -116,11 +138,16 @@ export default function MangaDetails() {
           {chapterList?.length ? chapterList.length : null} Capítulos
         </ChapterTextTop>
         {chapterList?.map((item, index) => (
-          <ChapterBox key={index} onPress={() => onPressChapter(item.id)}>
+          <ChapterBox
+            key={index}
+            onPress={() => onPressChapter(item.id, index)}
+          >
             <ChapterTopBox>
               <ChapterTextTop>Vol.{item.volume}</ChapterTextTop>
               <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
-              <ChapterTextTop>{item.title && CharCount(item.title)}</ChapterTextTop>
+              <ChapterTextTop>
+                {item.title && CharCount(item.title)}
+              </ChapterTextTop>
             </ChapterTopBox>
             <ChapterBottomBox>
               <ChapterTextBottom>

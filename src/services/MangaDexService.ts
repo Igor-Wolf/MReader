@@ -4,6 +4,7 @@ import {
   MangaCoverModel,
   MangaDetailsModel,
   MangaPage,
+  NextPrevMangaPage,
 } from "../Models/MangaModel";
 
 export const GetAllMangaMangaDex = async (
@@ -50,7 +51,6 @@ export const GetPopularMangaMangaDex = async (
       offset: page * 20,
       // Ordenação
       "order[followedCount]": "desc", // mais recentemente atualizado
-      
     },
   });
 
@@ -91,7 +91,6 @@ export const GetMangaByNameMangaDex = async (
       offset: 0,
       // Ordenação
       "order[followedCount]": "desc", // mais recentemente atualizado
-      
     },
   });
 
@@ -162,9 +161,9 @@ export const GetMangaByIDMangaDex = async (
   }
 };
 
-export const GetMangaChapterList = async (idChapter: string) => {
+export const GetMangaChapterList = async (idManga: string) => {
   const response = await MangaDexApi.get(
-    `/manga/${idChapter}/feed?translatedLanguage[]=en&includes[]=scanlation_group`
+    `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group`
   );
 
   const newChapterList: MangaChapterModel[] = [];
@@ -199,10 +198,10 @@ export const GetMangaChapterList = async (idChapter: string) => {
 };
 
 export const GetPagesListMangaDex = async (
-  idManga: string
+  idChap: string
 ): Promise<MangaPage[]> => {
   try {
-    const response = await MangaDexApi.get(`/at-home/server/${idManga}`);
+    const response = await MangaDexApi.get(`/at-home/server/${idChap}`);
 
     if (response.status === 200) {
       const { baseUrl, chapter } = response.data;
@@ -217,7 +216,57 @@ export const GetPagesListMangaDex = async (
 
     return [];
   } catch (error) {
-    console.error("Erro ao buscar páginas do MangaDex:", idManga);
+    console.error("Erro ao buscar páginas do MangaDex:", idChap);
     return [];
   }
 };
+export const GetPagesListNextChapterMangaDex = async (
+  idChap: string,
+  idManga: string
+): Promise<NextPrevMangaPage | null> => {
+  console.log("chablau");
+
+  try {
+    const responseListChapters = await GetMangaChapterList(idManga);
+
+    if (!responseListChapters || responseListChapters.length === 0) {
+      return null;
+    }
+
+    const currentIndex = responseListChapters.findIndex(
+      (item) => item.id === idChap
+    );
+
+    const nextChapter = responseListChapters[currentIndex - 1];
+
+    if (!nextChapter) {
+      console.warn("Nenhum próximo capítulo encontrado.");
+      return null;
+    }
+
+    const response = await MangaDexApi.get(`/at-home/server/${nextChapter.id}`);
+
+    if (response.status === 200) {
+      const { baseUrl, chapter } = response.data;
+      const { hash, data } = chapter;
+
+      const pageList: MangaPage[] = data.map((page: string) => {
+        return `${baseUrl}/data/${hash}/${page}`;
+      });
+
+      return {
+        list: pageList,
+        id: nextChapter.id,
+        title: nextChapter.title,
+        chapterNumber: nextChapter.chapter
+
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar páginas do próximo capítulo:", idChap, error);
+    return null;
+  }
+};
+
