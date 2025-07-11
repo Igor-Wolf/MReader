@@ -33,10 +33,7 @@ export interface NextPrevMangaPage {
   list: MangaPage[] | null;
   chapterNumber: string | null;
   title: string | null;
-
 }
-
-
 
 export interface ChapterInfo {
   id: string | null;
@@ -51,4 +48,3 @@ export interface ReaderChapters {
   nextChapter: ChapterInfo;
   prevChapter: ChapterInfo;
 }
-

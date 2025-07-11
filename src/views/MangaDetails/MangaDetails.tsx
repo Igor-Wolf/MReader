@@ -1,7 +1,8 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Image, Text } from "react-native";
+import { Button, Image, Text } from "react-native";
 import HeaderExtention from "../../components/HeaderExtentionFont";
 import {
+  ButtonsSetings,
   ChapterBottomBox,
   ChapterBox,
   ChapterTextBottom,
@@ -29,9 +30,12 @@ import { useEffect, useState } from "react";
 import { DateConvert } from "../../utils/convertDate";
 import { CharCount } from "../../utils/caracterCounter";
 import HeaderChapters from "../../components/HeaderChapters";
+import { createManga } from "../../database/Crud/manga";
+import { useRealm } from "../../context/RealmContext";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
+  const { realm, isLoading } = useRealm();
 
   const route = useRoute();
   const manga: MangaCoverModel = route.params?.objeto;
@@ -104,6 +108,16 @@ export default function MangaDetails() {
     navigation.navigate("Reader", { objeto });
   };
 
+  const handlePressAdd = () => {
+    alert("apertado");
+    createManga(realm, {
+      id: manga.id,
+      idFont: manga.idFont,
+      slug: manga.slug,
+      coverImage: manga.coverImage,
+    });
+  };
+
   useEffect(() => {
     refreshPage();
   }, []);
@@ -125,6 +139,10 @@ export default function MangaDetails() {
             <NormalTextTop>Status: {mangaDetails?.status}</NormalTextTop>
           </InfoContainer>
         </TopContainer>
+        <ButtonsSetings>
+          <Button title="Add" onPress={handlePressAdd}></Button>
+        </ButtonsSetings>
+
         <MidleContainer>
           <NormalText>{mangaDetails?.description}</NormalText>
           <NormalText>{mangaDetails?.description}</NormalText>
@@ -136,7 +154,7 @@ export default function MangaDetails() {
             ))}
           </TagsContainer>
         </MidleContainer>
-        <ChapterTextTop>
+        <ChapterTextTop style={{ paddingLeft: 5 }}>
           {chapterList?.length ? chapterList.length : null} Capítulos
         </ChapterTextTop>
         {chapterList?.map((item, index) => (

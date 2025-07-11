@@ -12,6 +12,7 @@ export const Container = styled.View`
   flex: 1;
   width: 100%;
   background-color: black;
+  padding: 0px;
   padding-top: 140px;
 
   height: 100%;
@@ -22,6 +23,7 @@ export const Container = styled.View`
 export const TopContainer = styled.View`
   flex-direction: row;
   width: 100%;
+  padding: 5px;
 `;
 
 export const InfoContainer = styled.View`
@@ -123,6 +125,13 @@ export const ChapterTextBottom = styled.Text`
   
   color: gray;
   padding-right: 10px;
+
+
+`
+
+export const ButtonsSetings = styled.View`
+  
+  width: 100%;
 
 
 `

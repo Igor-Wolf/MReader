@@ -8,6 +8,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Navegar from "../views/Navegar/Navegar";
 import NavigationStack from "./NavigationStack";
 import { CommonActions } from "@react-navigation/native";
+import BibliotecaStack from "./BibliotecaStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +49,29 @@ export default function RoutesTabs() {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Biblioteca" component={Biblioteca} />
+      <Tab.Screen
+        name="Biblioteca"
+        options={{ headerShown: false }}
+        component={BibliotecaStack}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: "Home" }],
+              })
+            );
+          },
+          transitionStart: (e) => {
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: "Biblioteca" }],
+              })
+            );
+          },
+        })}
+      />
       <Tab.Screen name="Atualizar" component={Atualizar} />
       <Tab.Screen name="Historico" component={Historico} />
       <Tab.Screen

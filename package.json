@@ -26,6 +26,7 @@
     "react-native-reanimated-carousel": "^4.0.2",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "^4.11.1",
+    "realm": "^12.14.2",
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
