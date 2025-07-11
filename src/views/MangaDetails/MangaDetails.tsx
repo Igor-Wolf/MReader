@@ -72,29 +72,32 @@ export default function MangaDetails() {
   };
 
   const onPressChapter = (chapter: string, indexList: number) => {
-    
-    
     const objeto = {
       currentChapter: {
         id: chapter,
         idFont: manga.idFont,
         idManga: manga.id,
+        coverImage: manga.coverImage,
         chapterNumber: chapterList[indexList].chapter,
-        title: chapterList[indexList].title
+        title: chapterList[indexList].title,
       },
       nextChapter: {
         id: chapterList[indexList - 1]?.id || null,
         idFont: manga.idFont,
         idManga: manga.id,
+        coverImage: manga.coverImage,
+
         chapterNumber: chapterList[indexList - 1]?.chapter || null,
-        title: chapterList[indexList -1]?.title || null
+        title: chapterList[indexList - 1]?.title || null,
       },
       prevChapter: {
         id: chapterList[indexList + 1]?.id || null,
         idFont: manga.idFont,
         idManga: manga.id,
+        coverImage: manga.coverImage,
+
         chapterNumber: chapterList[indexList + 1]?.chapter || null,
-        title: chapterList[indexList +1]?.title || null
+        title: chapterList[indexList + 1]?.title || null,
       },
     };
 
@@ -114,7 +117,7 @@ export default function MangaDetails() {
 
       <ScrollContainer>
         <TopContainer>
-          <ImageManga source={{ uri: manga.coverImage }} resizeMode="cover" />
+          <ImageManga source={{ uri: manga.coverImage }} contentFit="cover" />
           <InfoContainer>
             <TitleManga>{manga.slug}</TitleManga>
             <NormalTextTop>Artist: {mangaDetails?.artist}</NormalTextTop>

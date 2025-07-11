@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Image as ExpoImage } from 'expo-image';
 
 export const ScrollContainer = styled.ScrollView`
   flex: 1;
@@ -33,7 +34,7 @@ export const InfoContainer = styled.View`
   justify-content: space-evenly;
 `;
 
-export const ImageManga = styled.Image`
+export const ImageManga = styled(ExpoImage)`
   width: 40%;
   height: 250px;
   border-radius: 8px;

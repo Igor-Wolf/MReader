@@ -224,8 +224,6 @@ export const GetPagesListNextChapterMangaDex = async (
   idChap: string,
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
-  
-
   try {
     const responseListChapters = await GetMangaChapterList(idManga);
 
@@ -258,8 +256,7 @@ export const GetPagesListNextChapterMangaDex = async (
         list: pageList,
         id: nextChapter.id,
         title: nextChapter.title,
-        chapterNumber: nextChapter.chapter
-
+        chapterNumber: nextChapter.chapter,
       };
     }
 
@@ -273,8 +270,6 @@ export const GetPagesListPrevChapterMangaDex = async (
   idChap: string,
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
-  
-
   try {
     const responseListChapters = await GetMangaChapterList(idManga);
 
@@ -307,8 +302,7 @@ export const GetPagesListPrevChapterMangaDex = async (
         list: pageList,
         id: nextChapter.id,
         title: nextChapter.title,
-        chapterNumber: nextChapter.chapter
-
+        chapterNumber: nextChapter.chapter,
       };
     }
 
@@ -318,4 +312,3 @@ export const GetPagesListPrevChapterMangaDex = async (
     return null;
   }
 };
-

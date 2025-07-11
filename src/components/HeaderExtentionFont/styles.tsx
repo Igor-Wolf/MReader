@@ -65,6 +65,8 @@ export const InputBox = styled.TextInput`
   width:100%;
   background-color: white;
   border-radius:5px;
+  color: black;
+ 
 
 `
 
