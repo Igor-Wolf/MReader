@@ -31,7 +31,7 @@ export default function ExtentionManga() {
         response = await GetMangaByName(
           font.id,
           page,
-          encodeURIComponent(inputText)
+          inputText
         );
         break;
       default:

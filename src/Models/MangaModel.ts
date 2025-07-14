@@ -9,10 +9,11 @@ export interface MangaDetailsModel {
   id: string;
   description: string;
   status: string;
-  year: number;
+  year: number | null;
   author: string;
   artist: string;
   tags: string[];
+  coverImage: string | null
 }
 
 export interface MangaChapterModel {

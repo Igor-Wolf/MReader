@@ -1,3 +1,4 @@
+import { GetPagesListHqNow, GetPagesListNextChapterHqNow, GetPagesListPrevChapterHqNow } from "../../services/HqNowService";
 import {
   GetPagesListMangaDex,
   GetPagesListNextChapterMangaDex,
@@ -7,9 +8,9 @@ import {
 export const GetPagesList = async (idFont: number, idManga: string | null) => {
   switch (idFont) {
     case 1:
-      let response = await GetPagesListMangaDex(idManga);
-
-      return response;
+      return await GetPagesListMangaDex(idManga);
+    case 2:
+      return await GetPagesListHqNow(idManga);
 
     default:
       return null;
@@ -23,14 +24,18 @@ export const GetNextPagesList = async (
 ) => {
   switch (idFont) {
     case 1:
-      let response = await GetPagesListNextChapterMangaDex(idChap, idManga);
-
-      return response;
+      return await GetPagesListNextChapterMangaDex(idChap, idManga);
+    case 2:
+      return await GetPagesListNextChapterHqNow(idChap, idManga);
 
     default:
       return null;
   }
 };
+
+
+
+
 export const GetPrevPagesList = async (
   idFont: number,
   idChap: string | null,
@@ -38,9 +43,9 @@ export const GetPrevPagesList = async (
 ) => {
   switch (idFont) {
     case 1:
-      let response = await GetPagesListPrevChapterMangaDex(idChap, idManga);
-
-      return response;
+      return await GetPagesListPrevChapterMangaDex(idChap, idManga);
+    case 2:
+      return await GetPagesListPrevChapterHqNow(idChap, idManga);
 
     default:
       return null;

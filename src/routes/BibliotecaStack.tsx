@@ -13,13 +13,13 @@ const Stack = createStackNavigator();
 export default function BibliotecaStack() {
   return (
     <Stack.Navigator
-  initialRouteName="Biblioteca"
+  initialRouteName="Library"
   screenOptions={{
     headerStyle: { backgroundColor: "black" },
     headerTintColor: "white",
   }}
 >
-  <Stack.Screen name="Biblioteca" component={Biblioteca} options={{ headerShown: false }} />
+  <Stack.Screen name="Library" component={Biblioteca} options={{ headerShown: false }} />
   <Stack.Screen name="MangaDetails" component={MangaDetails} options={{ headerShown: false }} />
   <Stack.Screen name="Reader" component={Reader} options={{ headerShown: false }} />
 </Stack.Navigator>

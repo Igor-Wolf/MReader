@@ -150,6 +150,7 @@ export const GetMangaByIDMangaDex = async (
         author: author.attributes?.name || "Desconhecido",
         artist: artist.attributes?.name || "Desconhecido",
         tags: newTags || [],
+        coverImage: null
       };
       return returnManga;
     }
@@ -161,7 +162,7 @@ export const GetMangaByIDMangaDex = async (
   }
 };
 
-export const GetMangaChapterList = async (idManga: string) => {
+export const GetMangaChapterListMangaDex = async (idManga: string) => {
   const response = await MangaDexApi.get(
     `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group`
   );
@@ -225,7 +226,7 @@ export const GetPagesListNextChapterMangaDex = async (
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
   try {
-    const responseListChapters = await GetMangaChapterList(idManga);
+    const responseListChapters = await GetMangaChapterListMangaDex(idManga);
 
     if (!responseListChapters || responseListChapters.length === 0) {
       return null;
@@ -271,7 +272,7 @@ export const GetPagesListPrevChapterMangaDex = async (
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
   try {
-    const responseListChapters = await GetMangaChapterList(idManga);
+    const responseListChapters = await GetMangaChapterListMangaDex(idManga);
 
     if (!responseListChapters || responseListChapters.length === 0) {
       return null;

@@ -108,14 +108,18 @@ export default function MangaDetails() {
     navigation.navigate("Reader", { objeto });
   };
 
-  const handlePressAdd = () => {
-    alert("apertado");
-    createManga(realm, {
+  const handlePressAdd = async () => {
+    
+    const response: string = await createManga(realm, {
       id: manga.id,
       idFont: manga.idFont,
       slug: manga.slug,
       coverImage: manga.coverImage,
     });
+
+    if (response) {
+      alert(response);
+    }
   };
 
   useEffect(() => {
@@ -131,7 +135,7 @@ export default function MangaDetails() {
 
       <ScrollContainer>
         <TopContainer>
-          <ImageManga source={{ uri: manga.coverImage }} contentFit="cover" />
+          <ImageManga source={{ uri: manga.coverImage ? manga.coverImage : mangaDetails?.coverImage ?? undefined }} contentFit="cover" />
           <InfoContainer>
             <TitleManga>{manga.slug}</TitleManga>
             <NormalTextTop>Artist: {mangaDetails?.artist}</NormalTextTop>

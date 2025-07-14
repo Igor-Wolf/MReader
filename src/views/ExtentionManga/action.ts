@@ -1,12 +1,24 @@
-import { GetAllMangaMangaDex, GetMangaByNameMangaDex, GetPopularMangaMangaDex } from "../../services/MangaDexService";
+import {
+  GetAllMangaHqNow,
+  GetMangaByNameHqNow,
+  GetPopularMangaHqNow,
+} from "../../services/HqNowService";
+import {
+  getLatestMangaUpdates,
+  ultimosLançamentos,
+} from "../../services/MadaraService";
+import {
+  GetAllMangaMangaDex,
+  GetMangaByNameMangaDex,
+  GetPopularMangaMangaDex,
+} from "../../services/MangaDexService";
 
 export const GetAllManga = async (id: number, pagination: number) => {
   switch (id) {
     case 1:
-      
-      let response = await GetAllMangaMangaDex(pagination, id);
-
-      return response;
+      return await GetAllMangaMangaDex(pagination, id);
+    case 2:
+      return await GetAllMangaHqNow(pagination, id);
 
     default:
       return [];
@@ -15,22 +27,24 @@ export const GetAllManga = async (id: number, pagination: number) => {
 export const GetPopularManga = async (id: number, pagination: number) => {
   switch (id) {
     case 1:
-      
-      let response = await GetPopularMangaMangaDex(pagination, id);
-
-      return response;
+      return await GetPopularMangaMangaDex(pagination, id);
+    case 2:
+      return await GetPopularMangaHqNow(pagination, id);
 
     default:
       return [];
   }
 };
-export const GetMangaByName = async (id: number, pagination: number, slug: string) => {
+export const GetMangaByName = async (
+  id: number,
+  pagination: number,
+  slug: string
+) => {
   switch (id) {
     case 1:
-      
-      let response = await GetMangaByNameMangaDex(pagination, id, slug);
-
-      return response;
+      return await GetMangaByNameMangaDex(pagination, id, slug);
+    case 2:
+      return await GetMangaByNameHqNow(pagination, id, slug);
 
     default:
       return [];

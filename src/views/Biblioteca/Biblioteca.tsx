@@ -17,18 +17,27 @@ export default function Biblioteca() {
   useEffect(() => {
     if (!realm || isLoading) return;
 
-    // Buscar todos os mangás
-    const mangas = getAllMangas(realm);
-    setMangaList(Array.from(mangas));
+    const mangasResults = getAllMangas(realm);
+
+    const updateList = () => {
+      setMangaList(Array.from(mangasResults));
+    };
+
+    // Chama ao montar
+    updateList();
+
+    // Observa mudanças no banco
+    mangasResults.addListener(updateList);
+
+    // Limpa listener ao desmontar
+    return () => {
+      mangasResults.removeListener(updateList);
+    };
   }, [realm, isLoading]);
 
   return (
     <Container>
-      { <HeaderLib
-          name={"Biblioteca"}
-          
-         
-        ></HeaderLib> }
+      {<HeaderLib name={"Biblioteca"}></HeaderLib>}
 
       <FlatListContainer
         data={mangaList}
