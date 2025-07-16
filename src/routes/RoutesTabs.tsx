@@ -1,11 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../views/Home/Home";
-import Biblioteca from "../views/Biblioteca/Biblioteca";
 import Historico from "../views/Historico/Historico";
 import Atualizar from "../views/Atualizar/Atualizar";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Navegar from "../views/Navegar/Navegar";
 import NavigationStack from "./NavigationStack";
 import { CommonActions } from "@react-navigation/native";
 import BibliotecaStack from "./BibliotecaStack";
@@ -34,6 +32,10 @@ export default function RoutesTabs() {
           backgroundColor: "black", // cor de fundo da barra inferior
           borderTopColor: "black", // remover borda superior, se quiser
           height: 100, // opcional: altura da barra
+        },
+        tabBarLabelStyle: {
+          fontSize: 14,
+          fontWeight: "bold",
         },
 
         headerStyle: {

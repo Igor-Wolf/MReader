@@ -10,22 +10,34 @@ import Reader from "../views/Reader/Reader";
 const Stack = createStackNavigator();
 
 export default function NavigationStack() {
-
   return (
     <MangaFontProvider>
       <Stack.Navigator
         initialRouteName="Fonts"
-              screenOptions={{
-            
+        screenOptions={{
           headerStyle: { backgroundColor: "black" },
-          headerTintColor: "white",
+          headerTitleStyle: {
+            fontWeight: 'bold'
+          },
+          headerTintColor: "tomato",
         }}
       >
         <Stack.Screen name="Fonts" component={Navegar} />
-        <Stack.Screen name="ExtentionManga" component={ExtentionManga} options={{ headerShown: false }}/>
-        <Stack.Screen name="MangaDetails" component={MangaDetails} options={{ headerShown: false }} />
-        <Stack.Screen name="Reader" component={Reader} options={{ headerShown: false }} />
-        
+        <Stack.Screen
+          name="ExtentionManga"
+          component={ExtentionManga}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MangaDetails"
+          component={MangaDetails}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Reader"
+          component={Reader}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </MangaFontProvider>
   );

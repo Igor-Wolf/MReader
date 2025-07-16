@@ -27,6 +27,7 @@ export const FontBox = styled.TouchableOpacity`
     justify-content: center;
     padding: 10px;
     margin-top: 10px;
+    border-radius: 5px;
     
 
 `
