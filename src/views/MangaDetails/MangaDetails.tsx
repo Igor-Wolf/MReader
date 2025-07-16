@@ -140,6 +140,7 @@ export default function MangaDetails() {
             <TitleManga>{manga.slug}</TitleManga>
             <NormalTextTop>Artist: {mangaDetails?.artist}</NormalTextTop>
             <NormalTextTop>Autor: {mangaDetails?.author}</NormalTextTop>
+            <NormalTextTop>Year: {mangaDetails?.year}</NormalTextTop>
             <NormalTextTop>Status: {mangaDetails?.status}</NormalTextTop>
           </InfoContainer>
         </TopContainer>

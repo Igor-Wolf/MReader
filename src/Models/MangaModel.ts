@@ -9,7 +9,7 @@ export interface MangaDetailsModel {
   id: string;
   description: string;
   status: string;
-  year: number | null;
+  year: number | string | null;
   author: string;
   artist: string;
   tags: string[];

@@ -6,6 +6,7 @@ import {
   GetMangaByIDMangaDex,
   GetMangaChapterListMangaDex,
 } from "../../services/MangaDexService";
+import { GetMangaByIDNineManga, GetMangaChapterListNineManga } from "../../services/NineMnagaService";
 
 export const GetMangaDetails = async (idFont: number, idManga: string) => {
   switch (idFont) {
@@ -13,6 +14,8 @@ export const GetMangaDetails = async (idFont: number, idManga: string) => {
       return await GetMangaByIDMangaDex(idManga);
     case 2:
       return await GetMangaByIDHqNow(idManga);
+    case 3:
+      return await GetMangaByIDNineManga(idManga);
 
     default:
       return null;
@@ -25,6 +28,8 @@ export const GetChapterList = async (idFont: number, idManga: string) => {
       return await GetMangaChapterListMangaDex(idManga);
     case 2:
       return await GetMangaChapterListHqNow(idManga);
+    case 3:
+      return await GetMangaChapterListNineManga(idManga);
 
     default:
       return null;

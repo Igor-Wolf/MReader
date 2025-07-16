@@ -106,7 +106,7 @@ export default function Carrousel({
           animated: false, // Pode ser 'true' para uma transição suave
         });
         setChapterChanged(false); // Reseta a flag após a rolagem
-      }, 100); // Atraso em milissegundos para maior confiabilidade
+      }, 2000); // Atraso em milissegundos para maior confiabilidade
     }
   }, [list, chapterChanged]);
 
@@ -157,8 +157,10 @@ export default function Carrousel({
 
   return (
     <>
+      
       {/* Condição de renderização: O Carousel só será montado quando extendedList tiver dados.
           Isso garante que defaultIndex seja respeitado na primeira renderização com dados. */}
+      
       {extendedList.length > 0 ? (
         <Carousel
           ref={carouselRef}
@@ -189,6 +191,11 @@ export default function Carrousel({
               // Renderiza a página auxiliar de início do capítulo
               return (
                 <AuxiPage>
+
+
+
+
+
                   <ChapterIndicator>
                     <TitleText>Current Chapter</TitleText>
                     {mangaAll?.currentChapter?.title && (

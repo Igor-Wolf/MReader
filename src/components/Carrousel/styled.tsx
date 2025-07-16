@@ -103,3 +103,6 @@ export const BackButton = styled.TouchableOpacity`
   bottom: 10px;
   left: 20px;
 `;
+
+
+
