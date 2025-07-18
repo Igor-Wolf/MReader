@@ -51,16 +51,23 @@ export async function createChapter( // Mantendo o nome 'createChapter' como voc
 }
 
 export function getChapter(
-  realm: any,
+  realm: Realm, // O tipo 'any' pode ser Realm para melhor tipagem
   idFont: number,
   idManga: string,
   idChap: string
 ) {
-  const uid = `${idFont}:${idManga}:${idChap}`;
-  return realm.objectForPrimaryKey("Chapter", uid);
+  // Retorna uma coleção (Results) de capítulos que correspondem aos critérios.
+  // Se nenhum capítulo for encontrado, a coleção estará vazia (length = 0).
+  // Se um capítulo for encontrado, a coleção terá length = 1.
+  return realm
+    .objects("Chapter")
+    .filtered(
+      "idFont == $0 AND idManga == $1 AND id == $2",
+      idFont,
+      idManga,
+      idChap
+    );
 }
-
-// Sua função getChaptersByManga foi comentada, então não está incluída aqui.
 
 export function getAllChapters(realm: any) {
   // Retorna todos os capítulos ordenados por 'lastRead' em ordem descendente (do mais recente para o mais antigo)
@@ -108,5 +115,56 @@ export function deleteAllChapters(realm: any): boolean {
   } catch (error) {
     console.error("Erro ao deletar todos os capítulos do Realm:", error);
     throw error; // Relança o erro para tratamento externo
+  }
+}
+
+
+
+
+export async function toggleChapter(
+  realm: Realm,
+  chapterData: {
+    idChap: string;
+    idFont: number;
+    idManga: string;
+    coverImage: string;
+    titleManga: string;
+    chapterNumber: string;
+    title: string;
+  }
+) {
+  const uid = `${chapterData.idFont}:${chapterData.idManga}:${chapterData.idChap}`;
+
+  try {
+    // 1. Verificar se o capítulo já existe no DB
+    // Usamos getChapter que retorna uma Realm.Results.
+    // Se .length > 0, significa que o capítulo existe.
+    const existingChapterResults = getChapter(
+      realm,
+      chapterData.idFont,
+      chapterData.idManga,
+      chapterData.idChap
+    );
+
+    if (existingChapterResults.length > 0) {
+      // 2. Se o capítulo existe, remova-o
+      // Como getChapter retorna uma Results, precisamos pegar o primeiro objeto para o UID.
+      // Ou, mais fácil, podemos usar deleteChapterByUid que já espera o UID.
+      console.log(`Capítulo com UID '${uid}' encontrado. Removendo...`);
+      const deleted = deleteChapterByUid(realm, uid); // Use sua função existente
+      if (deleted) {
+        return `Capítulo '${uid}' removido com sucesso.`;
+      } else {
+        return `Falha ao remover capítulo '${uid}'.`;
+      }
+    } else {
+      // 3. Se o capítulo não existe, adicione-o
+      console.log(`Capítulo com UID '${uid}' não encontrado. Adicionando...`);
+      await createChapter(realm, chapterData); // Use sua função existente
+      return `Capítulo '${uid}' adicionado com sucesso.`;
+    }
+  } catch (error) {
+    console.error(`Erro ao alternar o estado do capítulo '${uid}':`, error);
+    throw error; // Relança o erro para que o chamador possa tratá-lo
   }
 }

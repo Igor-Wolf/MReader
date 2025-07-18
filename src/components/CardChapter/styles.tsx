@@ -81,10 +81,4 @@ export const TextButton = styled.Text`
 
 `
 
-export const RemoveAllButton = styled.Pressable`
-  
 
-  height: 50px;
-  width: 50px;
-
-`

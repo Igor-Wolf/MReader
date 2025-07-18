@@ -358,10 +358,10 @@ export const GetPagesListHqNow = async (
       }
     `,
     variables: {
-      chapterId: idChap,
+      chapterId: parseInt(idChap, 10),
     },
   };
-
+  
   try {
     const response = await HqNowApi.post("", requestData, {
       headers: {
@@ -408,7 +408,6 @@ export const GetPagesListNextChapterHqNow = async (
 
     if (response.status === 200) {
       
-      console.log(response.data)
 
       const pageList: MangaPage[] = response.data
 
@@ -452,7 +451,6 @@ export const GetPagesListPrevChapterHqNow = async (
 
     if (response.status === 200) {
       
-      console.log(response.data)
 
       const pageList: MangaPage[] = response.data
 

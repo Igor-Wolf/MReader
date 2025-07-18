@@ -32,6 +32,8 @@ import { CharCount } from "../../utils/caracterCounter";
 import HeaderChapters from "../../components/HeaderChapters";
 import { createManga } from "../../database/Crud/manga";
 import { useRealm } from "../../context/RealmContext";
+import ChapterPopup from "../../components/ChapterPopup";
+import { toggleChapter } from "../../database/Crud/chapter";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -91,6 +93,20 @@ export default function MangaDetails() {
     };
 
     navigation.navigate("Reader", { objeto });
+  };
+
+  const onLongPressChapter = async (chapter: string, indexList: number) => {
+    const chapterData = {
+      idChap: chapter?.toString(),
+      idFont: manga.idFont,
+      idManga: manga.id?.toString(),
+      titleManga: manga.slug,
+      coverImage: manga.coverImage,
+      chapterNumber: chapterList[indexList].chapter?.toString(),
+      title: chapterList[indexList].title,
+    };
+
+    const message = await toggleChapter(realm, chapterData);
   };
 
   const handlePressAdd = async () => {
@@ -157,7 +173,13 @@ export default function MangaDetails() {
           <ChapterBox
             key={index}
             onPress={() => onPressChapter(item.id, index)}
+            onLongPress={() => onLongPressChapter(item.id, index)}
           >
+            <ChapterPopup
+              idFont={manga.idFont}
+              idManga={manga.id}
+              idChap={item.id}
+            ></ChapterPopup>
             <ChapterTopBox>
               {item.volume && (
                 <ChapterTextTop>Vol.{item.volume}</ChapterTextTop>

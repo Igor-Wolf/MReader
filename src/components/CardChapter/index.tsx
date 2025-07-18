@@ -9,7 +9,6 @@ import {
 } from "./styles";
 import { CharCount } from "../../utils/caracterCounter";
 import {
-  ChapterInfo,
   ChapterInfoDatabase,
   MangaCoverModel,
   ReaderChapters,

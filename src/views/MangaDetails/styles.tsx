@@ -92,6 +92,7 @@ export const ChapterBox = styled.Pressable`
   height: 60px;
   justify-content: space-between;
   padding: 5px;
+  
 
 
 `
@@ -100,6 +101,7 @@ export const ChapterTopBox = styled.View`
   
   width: 100%;
   flex-direction: row;
+  
 
 
 `
@@ -107,6 +109,8 @@ export const ChapterBottomBox = styled.View`
   
   width: 100%;
     flex-direction: row;
+    margin-bottom: 5px;
+    
 
 
 

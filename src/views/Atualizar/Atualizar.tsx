@@ -1,9 +1,13 @@
 import { Text } from "react-native";
+import { Container, NormalText } from "./styles";
 
 export default function Atualizar() {
   return (
     <>
-      <Text>Olá mundo Atualizar</Text>
+      <Container>
+
+      <NormalText>Conteúdo em desenvolvimento</NormalText>
+      </Container>
     </>
   );
 }
