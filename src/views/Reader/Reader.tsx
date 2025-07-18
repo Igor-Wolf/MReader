@@ -8,8 +8,11 @@ import {
   ReaderChapters,
 } from "../../Models/MangaModel";
 import { GetNextPagesList, GetPagesList, GetPrevPagesList } from "./actions";
+import { createChapter } from "../../database/Crud/chapter";
+import { useRealm } from "../../context/RealmContext";
 
 export default function Reader() {
+  const { realm, isLoading } = useRealm();
   const navigation = useNavigation();
   const route = useRoute();
   const manga: any = route.params?.objeto;
@@ -20,47 +23,113 @@ export default function Reader() {
   const [nextMangaChapter, setNextMangaChapter] = useState<MangaPage[]>([]);
   const [prevMangaChapter, setPrevMangaChapter] = useState<MangaPage[]>([]);
 
+  // O estado inicial de mangaAll agora reflete a estrutura de ReaderChapters
   const [mangaAll, setMangaAll] = useState<ReaderChapters>(manga);
+  const [chapterDataLoaded, setChapterDataLoaded] = useState(false); // Novo estado para controlar o carregamento
 
   const fetchMangaPage = async () => {
+    // Dispara todas as chamadas de API em paralelo
+    const [responseCurrent, responseNext, responsePrev] = await Promise.all([
+      GetPagesList(mangaAll.currentChapter.idFont, mangaAll.currentChapter.id),
+      GetNextPagesList(
+        mangaAll.currentChapter.idFont,
+        mangaAll.currentChapter.id,
+        mangaAll.currentChapter.idManga
+      ),
+      GetPrevPagesList(
+        mangaAll.currentChapter.idFont,
+        mangaAll.currentChapter.id,
+        mangaAll.currentChapter.idManga
+      ),
+    ]);
 
-    const responseCurrent = await GetPagesList(
-      mangaAll.currentChapter.idFont,
-      mangaAll.currentChapter.id
-    );
+    // Atualiza o estado com as respostas
     if (responseCurrent) {
       setCurrentMangaChapter(responseCurrent);
     }
 
-    if (mangaAll.nextChapter.id) {
-      const responseNext = await GetPagesList(
-        mangaAll.nextChapter.idFont,
-        mangaAll.nextChapter.id
-      );
+    setMangaAll((prevMangaAllState) => {
+      let newNextChapterInfo = null;
       if (responseNext) {
-        setNextMangaChapter(responseNext);
+        newNextChapterInfo = {
+          id: responseNext.id,
+          title: responseNext.title,
+          chapterNumber: responseNext.chapterNumber,
+          // Garante que idFont e idManga sejam passados se o capítulo existir
+          idFont: prevMangaAllState.currentChapter?.idFont, // Ou responseNext.idFont se sua API retornar
+          idManga: prevMangaAllState.currentChapter?.idManga, // Ou responseNext.idManga se sua API retornar
+        };
+      } else {
+        // Se não há responseNext, define todas as propriedades do próximo capítulo como null
+        newNextChapterInfo = {
+          id: null,
+          title: null,
+          chapterNumber: null,
+          idFont: null,
+          idManga: null,
+        };
       }
+
+      let newPrevChapterInfo = null;
+      if (responsePrev) {
+        newPrevChapterInfo = {
+          id: responsePrev.id,
+          title: responsePrev.title,
+          chapterNumber: responsePrev.chapterNumber,
+          // Garante que idFont e idManga sejam passados se o capítulo existir
+          idFont: prevMangaAllState.currentChapter?.idFont, // Ou responsePrev.idFont se sua API retornar
+          idManga: prevMangaAllState.currentChapter?.idManga, // Ou responsePrev.idManga se sua API retornar
+        };
+      } else {
+        // Se não há responsePrev, define todas as propriedades do capítulo anterior como null
+        newPrevChapterInfo = {
+          id: null,
+          title: null,
+          chapterNumber: null,
+          idFont: null,
+          idManga: null,
+        };
+      }
+
+      return {
+        ...prevMangaAllState,
+        prevChapter: newPrevChapterInfo,
+        currentChapter: prevMangaAllState.currentChapter, // O currentChapter permanece o mesmo após o fetch inicial
+        nextChapter: newNextChapterInfo,
+      };
+    });
+
+    if (responseNext) {
+      setNextMangaChapter(responseNext.list);
+    } else {
+      setNextMangaChapter([]);
     }
 
-    if (mangaAll.prevChapter.id) {
-      const responsePrev = await GetPagesList(
-        mangaAll.prevChapter.idFont,
-        mangaAll.prevChapter.id
-      );
-      if (responsePrev) {
-        setPrevMangaChapter(responsePrev);
-      }
+    if (responsePrev) {
+      setPrevMangaChapter(responsePrev.list);
+    } else {
+      setPrevMangaChapter([]);
     }
+    setChapterDataLoaded(true); // Marca que os dados do capítulo foram carregados
   };
 
+  //--------------------------------------------- Fetch NextPrev Index
+
   const fetchMangaNextChapterPage = async () => {
+    // Reset o estado de carregamento para que o carrossel possa re-inicializar
+    setChapterDataLoaded(false);
+
+    // Se não há próximo capítulo, apenas alerta e não faz nada
     if (!mangaAll.nextChapter?.id) {
+      console.log("Não há próximo capítulo para buscar.");
+      setChapterDataLoaded(true); // Se não há próximo, consideramos "carregado" para evitar spinner infinito
       return;
     }
 
-    setPrevMangaChapter(currentMangaChapter);
-    setCurrentMangaChapter(nextMangaChapter);
-    setNextMangaChapter([]);
+    // Move as listas de páginas ANTES de fazer a requisição do próximo
+    setPrevMangaChapter(currentMangaChapter); // O capítulo atual se torna o anterior
+    setCurrentMangaChapter(nextMangaChapter); // O próximo se torna o atual
+    setNextMangaChapter([]); // Limpa o próximo enquanto buscamos o novo
 
     const response = await GetNextPagesList(
       mangaAll.nextChapter.idFont,
@@ -72,94 +141,97 @@ export default function Reader() {
       let newNextChapterInfo = null;
 
       if (response) {
-        // Se a API retornou um novo próximo capítulo
         newNextChapterInfo = {
           id: response.id,
           title: response.title,
           chapterNumber: response.chapterNumber,
-
           idFont: prevMangaAllState.nextChapter?.idFont,
           idManga: prevMangaAllState.nextChapter?.idManga,
         };
       } else {
+        // Se não há response, define todas as propriedades do próximo capítulo como null
+        newNextChapterInfo = {
+          id: null,
+          title: null,
+          chapterNumber: null,
+          idFont: null,
+          idManga: null,
+        };
       }
 
-      // Retorna o novo estado completo do `mangaAll`
       return {
-        ...prevMangaAllState, // Mantém as propriedades de nível superior do mangá (como mangaId, title, cover)
-        prevChapter: prevMangaAllState.currentChapter, // O capítulo atual anterior se torna o novo anterior
-        currentChapter: prevMangaAllState.nextChapter, // O antigo próximo capítulo se torna o atual (o que foi lido)
-        nextChapter: newNextChapterInfo, // O NOVO próximo capítulo (será null se não houver mais)
+        ...prevMangaAllState,
+        prevChapter: prevMangaAllState.currentChapter, // O capítulo que era atual se torna o anterior
+        currentChapter: prevMangaAllState.nextChapter, // O capítulo que era o próximo se torna o atual
+        nextChapter: newNextChapterInfo, // O NOVO próximo capítulo (pode ser null)
       };
     });
 
     if (response) {
       setNextMangaChapter(response.list);
     } else {
-      // Se não há mais capítulos, garanta que a lista de páginas futuras seja vazia.
       setNextMangaChapter([]);
     }
+    setChapterDataLoaded(true); // Marca que os dados do novo capítulo foram carregados
   };
 
   const fetchMangaPrevChapterPage = async () => {
-    // 1. Verificação inicial: existe um ID para o capítulo anterior?
-    // Se não houver, simplesmente retornamos (o alerta será tratado no Carrousel).
+    // Reset o estado de carregamento
+    setChapterDataLoaded(false);
+
     if (!mangaAll.prevChapter?.id) {
       console.log("Não há um ID de capítulo anterior para buscar.");
+      setChapterDataLoaded(true); // Se não há anterior, consideramos "carregado"
       return;
     }
 
-    // 2. Atualiza as listas de páginas no nível do Reader ANTES da requisição.
-    // Isso prepara o terreno para o Carrossel exibir o 'prevMangaChapter' atual como 'current'.
-    setNextMangaChapter(currentMangaChapter); // O atual se torna o novo próximo
+    // Move as listas de páginas ANTES de fazer a requisição do anterior
+    setNextMangaChapter(currentMangaChapter); // O capítulo atual se torna o próximo
     setCurrentMangaChapter(prevMangaChapter); // O anterior se torna o atual
     setPrevMangaChapter([]); // Limpa o anterior enquanto buscamos o novo
 
-    // 3. Tenta buscar as páginas do "anterior" capítulo real.
-    // Você precisará de uma função GetPrevPagesList similar à GetNextPagesList.
-    // Se GetPrevPagesList não existir, use GetPagesList e ajuste a lógica de currentIndex.
     const response = await GetPrevPagesList(
-      // Supondo que você tenha ou crie esta função
       mangaAll.prevChapter.idFont,
       mangaAll.prevChapter.id,
       mangaAll.prevChapter.idManga
     );
 
-    // 4. Atualiza o estado `mangaAll` com base na resposta.
-    // É crucial que `setMangaAll` seja executado sempre, para que o estado de `prevChapter`
-    // seja atualizado MESMO se `response` for null.
     setMangaAll((prevMangaAllState) => {
-      let newPrevChapterInfo = null; // Assume que não há capítulo anterior por padrão
+      let newPrevChapterInfo = null;
 
       if (response) {
-        // Se a API retornou um novo capítulo anterior, construa o objeto.
         newPrevChapterInfo = {
           id: response.id,
           title: response.title,
           chapterNumber: response.chapterNumber,
-          // Inclua TODAS as outras propriedades necessárias do capítulo (idFont, idManga, etc.).
-          idFont: prevMangaAllState.prevChapter?.idFont, // Usa a fonte do antigo prevChapter
-          idManga: prevMangaAllState.prevChapter?.idManga, // Usa o ID do mangá do antigo prevChapter
+          idFont: prevMangaAllState.prevChapter?.idFont,
+          idManga: prevMangaAllState.prevChapter?.idManga,
         };
       } else {
+        // Se não há response, define todas as propriedades do capítulo anterior como null
+        newPrevChapterInfo = {
+          id: null,
+          title: null,
+          chapterNumber: null,
+          idFont: null,
+          idManga: null,
+        };
       }
 
-      // Retorna o novo estado completo do `mangaAll`
       return {
-        ...prevMangaAllState, // Mantém as propriedades de nível superior do mangá
-        nextChapter: prevMangaAllState.currentChapter, // O capítulo atual anterior se torna o novo próximo
-        currentChapter: prevMangaAllState.prevChapter, // O antigo capítulo anterior se torna o atual (o que foi lido)
-        prevChapter: newPrevChapterInfo, // O NOVO capítulo anterior (será null se não houver mais)
+        ...prevMangaAllState,
+        nextChapter: prevMangaAllState.currentChapter, // O capítulo que era atual se torna o próximo
+        currentChapter: prevMangaAllState.prevChapter, // O capítulo que era o anterior se torna o atual
+        prevChapter: newPrevChapterInfo, // O NOVO capítulo anterior (pode ser null)
       };
     });
 
-    // 5. Atualiza a lista de páginas para o Carrossel APÓS o `setMangaAll`.
     if (response) {
-      setPrevMangaChapter(response.list); // Atualiza a lista de páginas do capítulo anterior
+      setPrevMangaChapter(response.list);
     } else {
-      // Se não há mais capítulos anteriores, garanta que a lista de páginas anteriores seja vazia.
       setPrevMangaChapter([]);
     }
+    setChapterDataLoaded(true); // Marca que os dados do novo capítulo foram carregados
   };
 
   useEffect(() => {
@@ -167,7 +239,10 @@ export default function Reader() {
       await fetchMangaPage();
     };
     load();
-  }, []);
+  }, [mangaAll.currentChapter.id]); // Adicionei dependency para recarregar se o currentChapter.id mudar externamente (ex: de MangaDetails)
+
+  // Função para ser chamada quando o carrossel estiver pronto e posicionado
+  const handleCarouselReady = () => {};
 
   useLayoutEffect(() => {
     const parent = navigation.getParent(); //pegando o tab navigation
@@ -183,14 +258,35 @@ export default function Reader() {
     };
   }, [navigation]);
 
+  useEffect(() => {
+    // Verifica se realm e currentChapter estão disponíveis antes de tentar salvar
+    if (realm && mangaAll.currentChapter?.id && !isLoading) {
+      handlePressAddChapter();
+    }
+  }, [realm, isLoading, mangaAll.currentChapter?.id]);
+
+  const handlePressAddChapter = async () => {
+    await createChapter(realm, {
+      idChap: mangaAll.currentChapter.id?.toString(),
+      idFont: mangaAll.currentChapter.idFont,
+      idManga: mangaAll.currentChapter.idManga.toString(),
+      coverImage: manga.currentChapter.coverImage,
+      titleManga: manga.currentChapter.titleManga,
+      chapterNumber: mangaAll.currentChapter.chapterNumber?.toString(),
+      title: mangaAll.currentChapter.title,
+    });
+  };
+
   return (
     <Container>
       <Carrousel
         nextPage={fetchMangaNextChapterPage}
         prevPage={fetchMangaPrevChapterPage}
-        list={currentMangaChapter}
+        list={currentMangaChapter} // Passa a lista de páginas do capítulo atual
         mangaAll={mangaAll}
         navigation={navigation}
+        chapterDataLoaded={chapterDataLoaded} // Passa o estado de carregamento
+        onCarouselReady={handleCarouselReady} // Passa a função de callback
       ></Carrousel>
     </Container>
   );

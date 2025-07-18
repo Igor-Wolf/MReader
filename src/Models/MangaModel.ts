@@ -13,7 +13,7 @@ export interface MangaDetailsModel {
   author: string;
   artist: string;
   tags: string[];
-  coverImage: string | null
+  coverImage: string | null;
 }
 
 export interface MangaChapterModel {
@@ -40,12 +40,24 @@ export interface ChapterInfo {
   id: string | null;
   idFont: number;
   idManga: string;
+  titleManga: string;
   chapterNumber: number | null;
   title: string | null;
+  coverImage: string | null;
+}
+export interface ChapterInfoDatabase {
+  id: string | null;
+  idFont: number;
+  idManga: string;
+  titleManga: string;
+  chapterNumber: number | null;
+  title: string | null;
+  coverImage: string | null;
+  lastRead: Date;
 }
 
 export interface ReaderChapters {
   currentChapter: ChapterInfo;
-  nextChapter: ChapterInfo;
-  prevChapter: ChapterInfo;
+  nextChapter: ChapterInfo | null;
+  prevChapter: ChapterInfo | null;
 }

@@ -1,16 +1,15 @@
-
-
 export const ChapterSchema = {
-  name: 'Chapter',
-  primaryKey: 'uid',
+  name: "Chapter",
+  primaryKey: "uid",
   properties: {
-    uid: 'string',        // `${idFont}:${chapterId}`
-    id: 'string',
-    mangaUid: 'string',   // ref para o Manga.uid
-    idFont: 'int',
-    title: 'string',
-    number: 'int',
-    pages: 'int',
-    createdAt: 'date',
+    uid: "string", // `${idFont}:${idManga}:${chapterId}`
+    id: "string",
+    idManga: "string",
+    idFont: "int",
+    title: "string?",
+    titleManga: "string",
+    chapterNumber: "string?",
+    coverImage: "string",
+    lastRead: "date",
   },
 };

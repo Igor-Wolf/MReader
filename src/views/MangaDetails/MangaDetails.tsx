@@ -81,35 +81,19 @@ export default function MangaDetails() {
         id: chapter,
         idFont: manga.idFont,
         idManga: manga.id,
+        titleManga: manga.slug,
         coverImage: manga.coverImage,
         chapterNumber: chapterList[indexList].chapter,
         title: chapterList[indexList].title,
       },
-      nextChapter: {
-        id: chapterList[indexList - 1]?.id || null,
-        idFont: manga.idFont,
-        idManga: manga.id,
-        coverImage: manga.coverImage,
-
-        chapterNumber: chapterList[indexList - 1]?.chapter || null,
-        title: chapterList[indexList - 1]?.title || null,
-      },
-      prevChapter: {
-        id: chapterList[indexList + 1]?.id || null,
-        idFont: manga.idFont,
-        idManga: manga.id,
-        coverImage: manga.coverImage,
-
-        chapterNumber: chapterList[indexList + 1]?.chapter || null,
-        title: chapterList[indexList + 1]?.title || null,
-      },
+      // nextChapter:null,
+      // prevChapter: null,
     };
 
     navigation.navigate("Reader", { objeto });
   };
 
   const handlePressAdd = async () => {
-    
     const response: string = await createManga(realm, {
       id: manga.id,
       idFont: manga.idFont,
@@ -135,7 +119,14 @@ export default function MangaDetails() {
 
       <ScrollContainer>
         <TopContainer>
-          <ImageManga source={{ uri: manga.coverImage ? manga.coverImage : mangaDetails?.coverImage ?? undefined }} contentFit="cover" />
+          <ImageManga
+            source={{
+              uri: manga.coverImage
+                ? manga.coverImage
+                : mangaDetails?.coverImage ?? undefined,
+            }}
+            contentFit="cover"
+          />
           <InfoContainer>
             <TitleManga>{manga.slug}</TitleManga>
             <NormalTextTop>Artist: {mangaDetails?.artist}</NormalTextTop>
@@ -168,11 +159,15 @@ export default function MangaDetails() {
             onPress={() => onPressChapter(item.id, index)}
           >
             <ChapterTopBox>
-              <ChapterTextTop>Vol.{item.volume}</ChapterTextTop>
-              <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
-              <ChapterTextTop>
-                {item.title && CharCount(item.title)}
-              </ChapterTextTop>
+              {item.volume && (
+                <ChapterTextTop>Vol.{item.volume}</ChapterTextTop>
+              )}
+              {item.chapter && (
+                <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
+              )}
+              {item.title && (
+                <ChapterTextTop>{CharCount(item.title)}</ChapterTextTop>
+              )}
             </ChapterTopBox>
             <ChapterBottomBox>
               <ChapterTextBottom>
