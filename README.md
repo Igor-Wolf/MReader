@@ -7,9 +7,13 @@ Leitor de quadrinhos criado em React Native com Expo (em Desenvolvimento)
 
 
 
+- O APk completo pode ser baixado [aqui](https://mega.nz/file/8bIBnCrJ#NJw4SEzldYCNnnv4fypK6ucGd1Lc9pWZ8I5vjeEaRfU).
+
+
+
 ## Sobre o desenvolvimento
 
-Sobre o desenvolvimento configurar o arquivo abaixo para não ter problemas de exibição no android:
+Sobre o desenvolvimento sempre que buildar lembrar de configurar o arquivo abaixo para não ter problemas de exibição no android na fonte correspondente:
 
 android\app\src\main\res\xml\network_security_config.xml
 
@@ -24,3 +28,8 @@ android\app\src\main\res\xml\network_security_config.xml
 e adicionar no android\app\src\main\AndroidManifest.xml
 
 android:networkSecurityConfig="@xml/network_security_config"
+
+
+
+
+
