@@ -1,17 +1,19 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../views/Home/Home";
-import Historico from "../views/Historico/Historico";
-import Atualizar from "../views/Atualizar/Atualizar";
+import { CommonActions } from "@react-navigation/native"; // Ainda pode ser útil para outras lógicas, mas não para o reset das abas
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-import Ionicons from "react-native-vector-icons/Ionicons";
+// Importe suas telas e Stacks
+import Home from "../views/Home/Home";
+import Atualizar from "../views/Atualizar/Atualizar";
 import NavigationStack from "./NavigationStack";
-import { CommonActions } from "@react-navigation/native";
 import BibliotecaStack from "./BibliotecaStack";
 import HistoricoStack from "./HistoricoStack";
+
 
 const Tab = createBottomTabNavigator();
 
 export default function RoutesTabs() {
+  // Mapeamento dos ícones para cada aba
   const icons: Record<string, { focused: string; unfocused: string }> = {
     Biblioteca: { focused: "library", unfocused: "library-outline" },
     Atualizar: { focused: "sync-circle", unfocused: "sync-circle-outline" },
@@ -19,111 +21,75 @@ export default function RoutesTabs() {
     Navegar: { focused: "compass", unfocused: "compass-outline" },
     Home: { focused: "home", unfocused: "home-outline" },
   };
+
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Home" // A rota inicial será 'Home'
       screenOptions={({ route }) => ({
+        // Esta prop é essencial: ela desmonta a tela quando a aba não está focada
+        // e a remonta (resetando seu estado, incluindo o stack) quando focada novamente.
         unmountOnBlur: true,
+
         tabBarIcon: ({ focused, color, size }) => {
           const icon = icons[route.name];
-          const iconName = focused ? icon?.focused : icon?.unfocused;
+          // Adicionado um fallback para garantir que o iconName nunca seja undefined.
+          // 'help-circle-outline' é um bom ícone padrão para casos não mapeados.
+          const iconName = icon ? (focused ? icon.focused : icon.unfocused) : "help-circle-outline";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarStyle: {
-          backgroundColor: "black", // cor de fundo da barra inferior
-          borderTopColor: "black", // remover borda superior, se quiser
-          height: 100, // opcional: altura da barra
+          backgroundColor: "black",
+          borderTopColor: "black",
+          height: 100,
         },
         tabBarLabelStyle: {
           fontSize: 14,
           fontWeight: "bold",
         },
+        tabBarActiveTintColor: "tomato", // Cor do ícone e label da aba ativa
+        tabBarInactiveTintColor: "gray",  // Cor do ícone e label da aba inativa
 
+        // Estilos do cabeçalho (header) para as telas dentro das abas
         headerStyle: {
           borderBottomColor: "gray",
-          borderWidth: 1,
-          backgroundColor: "black", // muda a cor de fundo do header
+          borderWidth: 1, // Nota: borderWidth pode causar problemas se não for só no bottom. Considere borderBottomWidth
+          backgroundColor: "black",
         },
-        headerTintColor: "tomato", // muda a cor do texto e ícones (como "voltar")
+        headerTintColor: "tomato",
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        tabBarActiveTintColor: "tomato",
-        tabBarInactiveTintColor: "gray",
       })}
     >
+      {/*
+        Organizei a ordem para que 'Home' seja a primeira Screen declarada
+        para melhor legibilidade, já que é a initialRouteName.
+      */}
+      <Tab.Screen name="Home" component={Home} />
+
       <Tab.Screen
         name="Biblioteca"
-        options={{ headerShown: false }}
         component={BibliotecaStack}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Home" }],
-              })
-            );
-          },
-          transitionStart: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Biblioteca" }],
-              })
-            );
-          },
-        })}
+        options={{ headerShown: false }} // O Stack Navigator (BibliotecaStack) vai gerenciar seu próprio header
+        // REMOVIDOS OS LISTENERS COM CommonActions.reset para evitar crashes e comportamento inesperado.
+        // O `unmountOnBlur: true` já cuida de resetar o estado do stack ao sair e voltar.
       />
+
       <Tab.Screen name="Atualizar" component={Atualizar} />
+
       <Tab.Screen
         name="Historico"
         component={HistoricoStack}
         options={{ headerShown: false }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Home" }],
-              })
-            );
-          },
-          transitionStart: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Historico" }],
-              })
-            );
-          },
-        })}
+        // REMOVIDOS OS LISTENERS COM CommonActions.reset
       />
 
       <Tab.Screen
         name="Navegar"
         component={NavigationStack}
         options={{ headerShown: false }}
-        listeners={({ navigation }) => ({
-          tabPress: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Home" }],
-              })
-            );
-          },
-          transitionStart: (e) => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Navegar" }],
-              })
-            );
-          },
-        })}
+        // REMOVIDOS OS LISTENERS COM CommonActions.reset
       />
-      <Tab.Screen name="Home" component={Home} />
     </Tab.Navigator>
   );
 }

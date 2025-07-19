@@ -13,6 +13,6 @@ export async function initRealm() {
     schema: [MangaSchema, ChapterSchema],
     path: 'manga-app.realm',
   });
-
+  console.log("Realm aberto com sucesso:", realm.path);
   return realm;
 }

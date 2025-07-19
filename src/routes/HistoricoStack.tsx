@@ -1,9 +1,7 @@
 // stacks/HomeStack.tsx
 import { createStackNavigator } from "@react-navigation/stack";
 import Navegar from "../views/Navegar/Navegar";
-import ExtentionManga from "../views/ExtentionManga/ExtentionManga";
 
-import { MangaFontProvider } from "../context/FontContext";
 import MangaDetails from "../views/MangaDetails/MangaDetails";
 import Reader from "../views/Reader/Reader";
 import Historico from "../views/Historico/Historico";
