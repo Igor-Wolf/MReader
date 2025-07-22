@@ -403,6 +403,7 @@ export const GetMangaChapterListAllLangsMangaDex = async (
   idManga: string,
   idChap: string
 ) => {
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   const resoponseChapter = await MangaDexApi.get(`/chapter/${idChap}`);
 
   let lang = resoponseChapter.data.data.attributes.translatedLanguage;
