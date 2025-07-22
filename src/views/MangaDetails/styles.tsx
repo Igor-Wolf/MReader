@@ -14,7 +14,7 @@ export const Container = styled.View`
   width: 100%;
   background-color: black;
   padding: 0px;
-  padding-top: 140px;
+  padding-top: 120px;
 
   height: 100%;
 

@@ -200,7 +200,7 @@ export default function Carrousel({
                   <ChapterIndicator>
                     <TitleText>Capítulo Atual</TitleText>
                     {mangaAll?.currentChapter?.title && (
-                      <TitleText>{mangaAll.currentChapter.title}</TitleText>
+                      <TitleText numberOfLines={1} ellipsizeMode="tail">{mangaAll.currentChapter.title}</TitleText>
                     )}
                     {mangaAll?.currentChapter.chapterNumber && (
                       <TitleText>
@@ -209,7 +209,7 @@ export default function Carrousel({
                     )}
                   </ChapterIndicator>
                   <ChapterIndicator>
-                    <TitleText>Capítulo Anterior</TitleText>
+                    <TitleText numberOfLines={1} ellipsizeMode="tail">Capítulo Anterior</TitleText>
                     {mangaAll?.prevChapter?.title && (
                       <TitleText>{mangaAll.prevChapter.title}</TitleText>
                     )}
@@ -236,7 +236,7 @@ export default function Carrousel({
                   <ChapterIndicator>
                     <TitleText>Capítulo Atual</TitleText>
                     {mangaAll?.currentChapter.title && (
-                      <TitleText>{mangaAll.currentChapter.title}</TitleText>
+                      <TitleText numberOfLines={1} ellipsizeMode="tail">{mangaAll.currentChapter.title}</TitleText>
                     )}
                     {mangaAll?.currentChapter.chapterNumber && (
                       <TitleText>
@@ -247,7 +247,7 @@ export default function Carrousel({
                   <ChapterIndicator>
                     <TitleText>Próximo Capítulo</TitleText>
                     {mangaAll?.nextChapter?.title && (
-                      <TitleText>{mangaAll.nextChapter.title}</TitleText>
+                      <TitleText numberOfLines={1} ellipsizeMode="tail">{mangaAll.nextChapter.title}</TitleText>
                     )}
                     {mangaAll?.nextChapter?.chapterNumber && (
                       <TitleText>
@@ -298,7 +298,7 @@ export default function Carrousel({
                 Cap. {mangaAll?.currentChapter.chapterNumber}
               </TitleText>
               {mangaAll?.currentChapter.title && (
-                <TitleText>{mangaAll.currentChapter.title}</TitleText>
+                <TitleText numberOfLines={1} ellipsizeMode="tail">{mangaAll.currentChapter.title}</TitleText>
               )}
             </ChapterTopBox>
 

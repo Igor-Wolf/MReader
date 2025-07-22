@@ -21,6 +21,7 @@ export const HeaderTitle = styled.Text`
   color: tomato;
   font-weight: 600;
   font-size: 20px;
+  overflow: hidden;
 `;
 
 export const BackButton = styled.TouchableOpacity`
