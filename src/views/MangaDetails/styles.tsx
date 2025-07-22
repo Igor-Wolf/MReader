@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { Image as ExpoImage } from 'expo-image';
+import { Image as ExpoImage } from "expo-image";
+import { Picker } from "@react-native-picker/picker";
 
 export const ScrollContainer = styled.ScrollView`
   flex: 1;
@@ -84,63 +85,56 @@ export const TagsBox = styled.View`
   margin: 5px;
 `;
 
-
 export const ChapterBox = styled.Pressable`
-  
-  width:100%;
-  
+  width: 100%;
+
   height: 75px;
   justify-content: space-between;
   padding: 5px;
-  
-
-
-`
+`;
 
 export const ChapterTopBox = styled.View`
-  
   width: 100%;
   flex-direction: row;
-  
-
-
-`
+  overflow: hidden;
+  padding-right: 5px;
+`;
 export const ChapterBottomBox = styled.View`
-  
   width: 100%;
-    flex-direction: row;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-    
+  flex-direction: row;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  padding-right: 5px;
 
-
-
-`
+  overflow: hidden;
+`;
 
 export const ChapterTextTop = styled.Text`
-  
   color: white;
   padding-right: 5px;
   font-size: 16px;
   font-weight: 600;
-
-
-`
+`;
 export const ChapterTextBottom = styled.Text`
-  
   color: gray;
   padding-right: 10px;
-
-
-`
+`;
 
 export const ButtonsSetings = styled.View`
-  
   width: 100%;
+`;
 
+export const NewLangBox = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 
-`
-
-
-
-
+export const StyledPicker = styled(Picker)`
+  height: 30px;
+  width: 50px;
+  background-color: black;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  color: white;
+`;

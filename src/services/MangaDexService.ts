@@ -150,7 +150,7 @@ export const GetMangaByIDMangaDex = async (
         author: author.attributes?.name || "Desconhecido",
         artist: artist.attributes?.name || "Desconhecido",
         tags: newTags || [],
-        coverImage: null
+        coverImage: null,
       };
       return returnManga;
     }
@@ -164,12 +164,29 @@ export const GetMangaByIDMangaDex = async (
 
 export const GetMangaChapterListMangaDex = async (idManga: string) => {
   const response = await MangaDexApi.get(
-    `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group`
+    `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group&limit=100&offset=0`
   );
 
   const newChapterList: MangaChapterModel[] = [];
   if (response.status === 200) {
-    const ChapterList = response.data.data;
+    const totalChapters = response.data.total; // Corrigido para pegar total de capítulos
+    const totalPages = Math.ceil(totalChapters / 100); // Calculando o número de páginas
+    let ChapterList = response.data.data; // Inicializa com a primeira página
+
+    // Loop para iterar pelas páginas restantes
+    for (let page = 1; page < totalPages; page++) {
+      const responseFor = await MangaDexApi.get(
+        `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group&limit=100&offset=${
+          page * 100
+        }`
+      );
+
+      if (responseFor.status === 200) {
+        ChapterList = ChapterList.concat(responseFor.data.data); // Concatena os capítulos da nova página
+      }
+    }
+
+    // Preenche a lista com os dados no formato desejado
     ChapterList.forEach((chap: any) => {
       newChapterList.push({
         id: chap.id,
@@ -183,6 +200,8 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
           )?.attributes?.name ?? null,
       });
     });
+
+    // Ordena os capítulos por número de capítulo (decrescente)
     newChapterList.sort((a, b) => {
       const chapterA = parseFloat(a.chapter);
       const chapterB = parseFloat(b.chapter);
@@ -192,6 +211,66 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
 
       return chapterB - chapterA;
     });
+
+    return newChapterList;
+  } else {
+    return [];
+  }
+};
+
+export const GetMangaChapterListByLangMangaDex = async (
+  idManga: string,
+  lang: string
+) => {
+  const response = await MangaDexApi.get(
+    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`
+  );
+
+  const newChapterList: MangaChapterModel[] = [];
+  if (response.status === 200) {
+    const totalChapters = response.data.total; // Corrigido para pegar o total de capítulos
+    const totalPages = Math.ceil(totalChapters / 100); // Calculando o número total de páginas
+    let ChapterList = response.data.data; // Inicializa com os primeiros capítulos
+
+    // Loop para pegar os capítulos das páginas subsequentes
+    for (let page = 1; page < totalPages; page++) {
+      const responseFor = await MangaDexApi.get(
+        `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=${
+          page * 100
+        }`
+      );
+
+      if (responseFor.status === 200) {
+        ChapterList = ChapterList.concat(responseFor.data.data); // Concatena os capítulos da nova página
+      }
+    }
+
+    // Processa os capítulos e preenche a lista com os dados necessários
+    ChapterList.forEach((chap: any) => {
+      newChapterList.push({
+        id: chap.id,
+        volume: chap.attributes.volume ?? null,
+        chapter: chap.attributes.chapter ?? null,
+        title: chap.attributes.title ?? null,
+        date: chap.attributes.publishAt ?? null,
+        scanName:
+          chap.relationships?.find(
+            (rel: any) => rel.type === "scanlation_group"
+          )?.attributes?.name ?? null,
+      });
+    });
+
+    // Ordena os capítulos por número de capítulo (decrescente)
+    newChapterList.sort((a, b) => {
+      const chapterA = parseFloat(a.chapter);
+      const chapterB = parseFloat(b.chapter);
+
+      if (isNaN(chapterA)) return 1;
+      if (isNaN(chapterB)) return -1;
+
+      return chapterB - chapterA;
+    });
+
     return newChapterList;
   } else {
     return [];
@@ -226,7 +305,10 @@ export const GetPagesListNextChapterMangaDex = async (
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
   try {
-    const responseListChapters = await GetMangaChapterListMangaDex(idManga);
+    const responseListChapters = await GetMangaChapterListAllLangsMangaDex(
+      idManga,
+      idChap
+    );
 
     if (!responseListChapters || responseListChapters.length === 0) {
       return null;
@@ -272,7 +354,10 @@ export const GetPagesListPrevChapterMangaDex = async (
   idManga: string
 ): Promise<NextPrevMangaPage | null> => {
   try {
-    const responseListChapters = await GetMangaChapterListMangaDex(idManga);
+    const responseListChapters = await GetMangaChapterListAllLangsMangaDex(
+      idManga,
+      idChap
+    );
 
     if (!responseListChapters || responseListChapters.length === 0) {
       return null;
@@ -311,5 +396,73 @@ export const GetPagesListPrevChapterMangaDex = async (
   } catch (error) {
     console.error("Erro ao buscar páginas do próximo capítulo:", idChap, error);
     return null;
+  }
+};
+
+export const GetMangaChapterListAllLangsMangaDex = async (
+  idManga: string,
+  idChap: string
+) => {
+  const resoponseChapter = await MangaDexApi.get(`/chapter/${idChap}`);
+
+  let lang = resoponseChapter.data.data.attributes.translatedLanguage;
+
+  const response = await MangaDexApi.get(
+    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`
+  );
+
+  const newChapterList: MangaChapterModel[] = [];
+  if (response.status === 200) {
+    const totalChapters = response.data.total;
+    const totalPages = Math.ceil(totalChapters / 100);
+    let rawChapterList = response.data.data;
+
+    // Loop para pegar os capítulos das páginas subsequentes
+    for (let page = 1; page < totalPages; page++) {
+      await sleep(300); // Espera 300ms antes da próxima requisição
+
+      const responseFor = await MangaDexApi.get(
+        `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=${
+          page * 100
+        }`
+      );
+
+      if (responseFor.status === 200) {
+        rawChapterList = rawChapterList.concat(responseFor.data.data);
+      }
+    }
+
+    // Filtra os capítulos pela linguagem traduzida
+    const chapterList = rawChapterList;
+
+    // Adiciona os capítulos filtrados ao novo array
+    chapterList.forEach((chap: any) => {
+      newChapterList.push({
+        id: chap.id,
+        volume: chap.attributes.volume ?? null,
+        chapter: chap.attributes.chapter ?? null,
+        title: chap.attributes.title ?? null,
+        date: chap.attributes.publishAt ?? null,
+        scanName:
+          chap.relationships?.find(
+            (rel: any) => rel.type === "scanlation_group"
+          )?.attributes?.name ?? null,
+      });
+    });
+
+    // Ordena os capítulos em ordem decrescente
+    newChapterList.sort((a, b) => {
+      const chapterA = parseFloat(a.chapter ?? "0");
+      const chapterB = parseFloat(b.chapter ?? "0");
+
+      if (isNaN(chapterA)) return 1;
+      if (isNaN(chapterB)) return -1;
+
+      return chapterB - chapterA;
+    });
+
+    return newChapterList;
+  } else {
+    return [];
   }
 };

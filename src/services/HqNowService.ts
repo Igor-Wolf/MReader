@@ -206,8 +206,6 @@ export const GetMangaByNameHqNow = async (
 export const GetMangaByIDHqNow = async (
   idManga: number // Garantir que seja um número, como o GraphQL espera
 ): Promise<MangaDetailsModel | null> => {
-
-
   const query = `
     query getHqsById($id: Int!) { 
       getHqsById(id: $id) { 
@@ -361,7 +359,7 @@ export const GetPagesListHqNow = async (
       chapterId: parseInt(idChap, 10),
     },
   };
-  
+
   try {
     const response = await HqNowApi.post("", requestData, {
       headers: {
@@ -380,7 +378,6 @@ export const GetPagesListHqNow = async (
     throw error; // Re-throw the error if needed
   }
 };
-
 
 export const GetPagesListNextChapterHqNow = async (
   idChap: string,
@@ -404,12 +401,10 @@ export const GetPagesListNextChapterHqNow = async (
       return null;
     }
 
-    const response = await GetPagesListHqNow(nextChapter.id)
+    const response = await GetPagesListHqNow(nextChapter.id);
 
-    if (response.status === 200) {
-      
-
-      const pageList: MangaPage[] = response.data
+    if (response) {
+      const pageList: MangaPage[] = response;
 
       return {
         list: pageList,
@@ -435,24 +430,19 @@ export const GetPagesListPrevChapterHqNow = async (
     if (!responseListChapters || responseListChapters.length === 0) {
       return null;
     }
-
     const currentIndex = responseListChapters.findIndex(
       (item) => item.id === idChap
     );
 
     const nextChapter = responseListChapters[currentIndex + 1];
-
     if (!nextChapter) {
       console.warn("Nenhum próximo capítulo encontrado.");
       return null;
     }
 
-    const response = await GetPagesListHqNow(nextChapter.id)
-
-    if (response.status === 200) {
-      
-
-      const pageList: MangaPage[] = response.data
+    const response = await GetPagesListHqNow(nextChapter.id);
+    if (response) {
+      const pageList: MangaPage[] = response;
 
       return {
         list: pageList,

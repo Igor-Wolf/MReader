@@ -12,9 +12,11 @@ import {
   ImageManga,
   InfoContainer,
   MidleContainer,
+  NewLangBox,
   NormalText,
   NormalTextTop,
   ScrollContainer,
+  StyledPicker,
   TagsBox,
   TagsContainer,
   TitleManga,
@@ -25,7 +27,11 @@ import {
   MangaCoverModel,
   MangaDetailsModel,
 } from "../../Models/MangaModel";
-import { GetChapterList, GetMangaDetails } from "./action";
+import {
+  GetChapterList,
+  GetChapterListAnotherLanguage,
+  GetMangaDetails,
+} from "./action";
 import { useEffect, useState } from "react";
 import { DateConvert } from "../../utils/convertDate";
 import { CharCount } from "../../utils/caracterCounter";
@@ -34,6 +40,8 @@ import { createManga } from "../../database/Crud/manga";
 import { useRealm } from "../../context/RealmContext";
 import ChapterPopup from "../../components/ChapterPopup";
 import { toggleChapter } from "../../database/Crud/chapter";
+import { Picker } from "@react-native-picker/picker";
+import { GetMangaChapterListByLangMangaDex } from "../../services/MangaDexService";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -41,6 +49,7 @@ export default function MangaDetails() {
 
   const route = useRoute();
   const manga: MangaCoverModel = route.params?.objeto;
+  const [selectedLanguage, setSelectedLanguage] = useState();
   const [mangaDetails, setMangaDetails] = useState<MangaDetailsModel | null>(
     null
   );
@@ -56,6 +65,16 @@ export default function MangaDetails() {
     const response = await GetChapterList(manga.idFont, manga.id);
     if (response) {
       return response;
+    }
+  };
+  const fetchChapterListByLang = async (lang: string) => {
+    const response = await GetChapterListAnotherLanguage(
+      manga.idFont,
+      manga.id,
+      lang
+    );
+    if (response) {
+      setChapterList(response);
     }
   };
 
@@ -88,8 +107,6 @@ export default function MangaDetails() {
         chapterNumber: chapterList[indexList].chapter,
         title: chapterList[indexList].title,
       },
-      // nextChapter:null,
-      // prevChapter: null,
     };
 
     navigation.navigate("Reader", { objeto });
@@ -166,9 +183,25 @@ export default function MangaDetails() {
             ))}
           </TagsContainer>
         </MidleContainer>
-        <ChapterTextTop style={{ paddingLeft: 5 }}>
-          {chapterList?.length ? chapterList.length : null} Capítulos
-        </ChapterTextTop>
+
+        <NewLangBox>
+          <ChapterTextTop style={{ paddingLeft: 5 }}>
+            {chapterList?.length ? chapterList.length : null} Capítulos
+          </ChapterTextTop>
+          <StyledPicker
+            selectedValue={selectedLanguage}
+            onValueChange={(value) => {
+              setSelectedLanguage(value); // se quiser atualizar o estado também
+              fetchChapterListByLang(value); // chama a função com o valor selecionado
+            }}
+            mode="dropdown"
+            dropdownIconColor="#FF6347"
+          >
+            <Picker.Item label="EN" value="en" />
+            <Picker.Item label="PT" value="pt-br" />
+            <Picker.Item label="ES" value="es" />
+          </StyledPicker>
+        </NewLangBox>
         {chapterList?.map((item, index) => (
           <ChapterBox
             key={index}
@@ -188,7 +221,7 @@ export default function MangaDetails() {
                 <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
               )}
               {item.title && (
-                <ChapterTextTop>{CharCount(item.title)}</ChapterTextTop>
+                <ChapterTextTop numberOfLines={1} ellipsizeMode="tail" style={{flex: 1}}>{item.title}</ChapterTextTop>
               )}
             </ChapterTopBox>
             <ChapterBottomBox>
@@ -196,7 +229,7 @@ export default function MangaDetails() {
                 {item.date ? DateConvert(item.date) : null}
               </ChapterTextBottom>
               <ChapterTextBottom> - </ChapterTextBottom>
-              <ChapterTextBottom>{item.scanName}</ChapterTextBottom>
+              <ChapterTextBottom numberOfLines={1} ellipsizeMode="tail" style={{flex: 1}}>{item.scanName}</ChapterTextBottom>
             </ChapterBottomBox>
           </ChapterBox>
         ))}

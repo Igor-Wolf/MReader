@@ -48,8 +48,7 @@ export default function CardChapter({ objeto }: CardChapterProps) {
         chapterNumber: object.chapterNumber,
         title: object.title,
       },
-      // nextChapter:null,
-      // prevChapter: null,
+     
     };
     navigation.navigate("Reader", { objeto });
   };
@@ -71,8 +70,8 @@ export default function CardChapter({ objeto }: CardChapterProps) {
       </ImageContainer>
       <InfoContainer>
         <MangaContainerText>
-          <MangaTitle>{CharCount(objeto?.titleManga)}</MangaTitle>
-          {objeto.title && <MangaTitle>{CharCount(objeto.title)}</MangaTitle>}
+          <MangaTitle numberOfLines={1} ellipsizeMode="tail">{objeto?.titleManga}</MangaTitle>
+          {objeto.title && <MangaTitle numberOfLines={1} ellipsizeMode="tail">{objeto.title}</MangaTitle>}
           {objeto.chapterNumber && (
             <MangaTitle>{`Ch. ${CharCount(objeto?.chapterNumber)}`}</MangaTitle>
           )}
