@@ -34,14 +34,12 @@ import {
 } from "./action";
 import { useEffect, useState } from "react";
 import { DateConvert } from "../../utils/convertDate";
-import { CharCount } from "../../utils/caracterCounter";
 import HeaderChapters from "../../components/HeaderChapters";
 import { createManga } from "../../database/Crud/manga";
 import { useRealm } from "../../context/RealmContext";
 import ChapterPopup from "../../components/ChapterPopup";
-import { toggleChapter } from "../../database/Crud/chapter";
+import { toggleReadChapter } from "../../database/Crud/readChapter"; 
 import { Picker } from "@react-native-picker/picker";
-import { GetMangaChapterListByLangMangaDex } from "../../services/MangaDexService";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -123,7 +121,7 @@ export default function MangaDetails() {
       title: chapterList[indexList].title,
     };
 
-    const message = await toggleChapter(realm, chapterData);
+    const message = await toggleReadChapter(realm, chapterData);
   };
 
   const handlePressAdd = async () => {

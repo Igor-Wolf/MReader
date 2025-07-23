@@ -3,14 +3,12 @@ import { useRealm } from "../../context/RealmContext";
 import { createManga, getAllMangas } from "../../database/Crud/manga";
 import { useEffect, useState } from "react";
 import { Container, FlatListContainer } from "./styles";
-import HeaderExtention from "../../components/HeaderExtentionFont";
 import CardManga from "../../components/CardManga";
-import { useNavigation } from "@react-navigation/native";
 import HeaderLib from "../../components/HeaderLib";
 
 export default function Biblioteca() {
   const { realm, isLoading } = useRealm();
-  const navigation = useNavigation();
+  const [filter, setFilter] = useState("");
 
   const [mangaList, setMangaList] = useState([]);
 
@@ -33,11 +31,15 @@ export default function Biblioteca() {
     return () => {
       mangasResults.removeListener(updateList);
     };
-  }, [realm, isLoading]);
+  }, [realm, isLoading, filter]);
+
+  const filteredMangaList = mangaList.filter((manga) =>
+    manga.slug.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <Container>
-      {<HeaderLib name={"Biblioteca"}></HeaderLib>}
+      {<HeaderLib name={"Biblioteca"} setFilter={setFilter}></HeaderLib>}
 
       {mangaList.length === 0 ? (
         <View
@@ -49,7 +51,7 @@ export default function Biblioteca() {
         </View>
       ) : (
         <FlatListContainer
-          data={mangaList}
+          data={filteredMangaList}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
             const { uid, ...itemWithoutUid } = item;
@@ -57,9 +59,6 @@ export default function Biblioteca() {
           }}
           numColumns={2}
           horizontal={false}
-        //   refreshControl={
-        //     <RefreshControl refreshing={refreshing} onRefresh={refreshPage} />
-        //   }
         ></FlatListContainer>
       )}
     </Container>

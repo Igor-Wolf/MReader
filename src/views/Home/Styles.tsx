@@ -29,3 +29,9 @@ export const NormalText = styled.Text`
     font-size: 18px;
 
 `
+export const SubText = styled.Text`
+    
+    color: gray;
+    font-size: 16px;
+
+`

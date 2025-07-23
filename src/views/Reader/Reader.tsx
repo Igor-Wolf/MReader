@@ -9,6 +9,7 @@ import {
 } from "../../Models/MangaModel";
 import { GetNextPagesList, GetPagesList, GetPrevPagesList } from "./actions";
 import { createChapter } from "../../database/Crud/chapter";
+import { createReadChapter } from "../../database/Crud/readChapter";
 import { useRealm } from "../../context/RealmContext";
 
 export default function Reader() {
@@ -265,17 +266,23 @@ export default function Reader() {
     }
   }, [realm, isLoading, mangaAll.currentChapter?.id]);
 
-  const handlePressAddChapter = async () => {
-    await createChapter(realm, {
-      idChap: mangaAll.currentChapter.id?.toString(),
-      idFont: mangaAll.currentChapter.idFont,
-      idManga: mangaAll.currentChapter.idManga.toString(),
-      coverImage: manga.currentChapter.coverImage,
-      titleManga: manga.currentChapter.titleManga,
-      chapterNumber: mangaAll.currentChapter.chapterNumber?.toString(),
-      title: mangaAll.currentChapter.title,
-    });
+ const handlePressAddChapter = async () => {
+  const chapterData = {
+    idChap: mangaAll.currentChapter.id?.toString(),
+    idFont: mangaAll.currentChapter.idFont,
+    idManga: mangaAll.currentChapter.idManga.toString(),
+    coverImage: manga.currentChapter.coverImage,
+    titleManga: manga.currentChapter.titleManga,
+    chapterNumber: mangaAll.currentChapter.chapterNumber?.toString(),
+    title: mangaAll.currentChapter.title,
   };
+
+  await Promise.all([
+    createChapter(realm, chapterData),
+    createReadChapter(realm, chapterData),
+  ]);
+};
+
 
   return (
     <Container>

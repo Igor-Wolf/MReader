@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRealm } from "../../context/RealmContext";
 import { Container, ContainerColor } from "./styled";
-import { getChapter } from "../../database/Crud/chapter"; // Sua função getChapter, que agora retorna Realm.Results
+import { getReadChapter } from "../../database/Crud/readChapter"; // Sua função getChapter, que agora retorna Realm.Results
 
 export default function ChapterPopup({ idFont, idManga, idChap }) {
   const { realm, isLoading } = useRealm();
@@ -23,7 +23,12 @@ export default function ChapterPopup({ idFont, idManga, idChap }) {
     try {
       // 2. Obtém a coleção de resultados para o capítulo específico.
       // Esta coleção é "viva" e será atualizada automaticamente pelo Realm.
-      chapterQueryResult = getChapter(realm, idFont, String(idManga), String(idChap));
+      chapterQueryResult = getReadChapter(
+        realm,
+        idFont,
+        String(idManga),
+        String(idChap)
+      );
     } catch (error) {
       // Captura qualquer erro na consulta inicial ao Realm (ex: schema inválido).
       console.error("Erro ao obter capítulo do Realm para listener:", error);

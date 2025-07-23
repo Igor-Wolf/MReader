@@ -35,5 +35,6 @@ export function getManga(realm, idFont: number, id: string) {
 }
 
 export function getAllMangas(realm) {
-  return realm.objects("Manga");
+  return realm.objects("Manga").sorted("slug", false); // false = ordem crescente (A → Z)
 }
+
