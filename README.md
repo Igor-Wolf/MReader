@@ -7,7 +7,7 @@ Leitor de quadrinhos criado em React Native com Expo (em Desenvolvimento)
 
 
 
-- O APk completo pode ser baixado [aqui](https://mega.nz/file/8bIBnCrJ#NJw4SEzldYCNnnv4fypK6ucGd1Lc9pWZ8I5vjeEaRfU).
+- O APk completo pode ser baixado [aqui](https://mega.nz/file/MX4BQaCY#DCpZMAh4myKrRrQB_Q1J1R0f4CTFKr7Q8cMIALgr57Q).
 
 
 

@@ -1,4 +1,4 @@
-export async function createChapter( // Mantendo o nome 'createChapter' como você o tem
+export async function createChapter( 
   realm: any, // Tipo 'any' para flexibilidade, como solicitado
   {
     idChap,
@@ -51,7 +51,7 @@ export async function createChapter( // Mantendo o nome 'createChapter' como voc
 }
 
 export function getChapter(
-  realm: Realm, // O tipo 'any' pode ser Realm para melhor tipagem
+  realm: Realm, 
   idFont: number,
   idManga: string,
   idChap: string

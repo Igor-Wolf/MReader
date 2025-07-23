@@ -1,29 +1,25 @@
-export async function createReadChapter( // Mantendo o nome 'createChapter' como você o tem
-  realm: any, // Tipo 'any' para flexibilidade, como solicitado
-  {
-    idChap,
-    idFont,
-    idManga,
-    coverImage,
-    titleManga,
-    chapterNumber,
-    title,
-  }: {
-    // Desestruturação com tipagem 'any' para as propriedades
-    idChap: string;
-    idFont: number;
-    idManga: string;
-    coverImage: string;
-    titleManga: string;
-    chapterNumber: string;
-    title: string;
-  }
-) {
+export async function createReadChapter({
+  idChap,
+  idFont,
+  idManga,
+  coverImage,
+  titleManga,
+  chapterNumber,
+  title,
+}: {
+  // Desestruturação com tipagem 'any' para as propriedades
+  idChap: string;
+  idFont: number;
+  idManga: string;
+  coverImage: string;
+  titleManga: string;
+  chapterNumber: string;
+  title: string;
+}) {
   const uid = `${idFont}:${idManga}:${idChap}`; // UID baseado em idFont, idManga e id do capítulo
 
   try {
     realm.write(() => {
-      // Usamos "modified" para que, se o capítulo já existir (pelo UID), ele seja atualizado.
       // Se não existir, ele será criado.
       realm.create(
         "ReadChapter", // Nome do esquema
@@ -117,9 +113,6 @@ export function deleteAllReadChapters(realm: any): boolean {
     throw error; // Relança o erro para tratamento externo
   }
 }
-
-
-
 
 export async function toggleReadChapter(
   realm: Realm,
