@@ -61,8 +61,8 @@ export default function HeaderExtention({
               <InputBox
                 placeholder="Buscar..."
                 placeholderTextColor="black"
-                returnKeyType="search" // Mostra a lupa ou "Buscar" no botão de retorno
-                keyboardType="default" // Ou 'web-search' (em Android)
+                returnKeyType="search"
+                keyboardType="default"
                 autoCapitalize="none"
                 autoCorrect={false}
                 onChangeText={setInputText}

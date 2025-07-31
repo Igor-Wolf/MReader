@@ -1,13 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { CommonActions } from "@react-navigation/native"; // Ainda pode ser útil para outras lógicas, mas não para o reset das abas
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-// Importe suas telas e Stacks
-import Home from "../views/Home/Home";
 import Atualizar from "../views/Atualizar/Atualizar";
 import NavigationStack from "./NavigationStack";
 import BibliotecaStack from "./BibliotecaStack";
 import HistoricoStack from "./HistoricoStack";
+import HomeStack from "./HomeStack";
 
 
 const Tab = createBottomTabNavigator();
@@ -19,21 +17,19 @@ export default function RoutesTabs() {
     Atualizar: { focused: "sync-circle", unfocused: "sync-circle-outline" },
     Historico: { focused: "time", unfocused: "time-outline" },
     Navegar: { focused: "compass", unfocused: "compass-outline" },
-    Home: { focused: "home", unfocused: "home-outline" },
+    Inicio: { focused: "home", unfocused: "home-outline" },
   };
 
   return (
     <Tab.Navigator
-      initialRouteName="Home" // A rota inicial será 'Home'
+      initialRouteName="Inicio" // A rota inicial será 'Home'
       screenOptions={({ route }) => ({
-        // Esta prop é essencial: ela desmonta a tela quando a aba não está focada
-        // e a remonta (resetando seu estado, incluindo o stack) quando focada novamente.
+       
         unmountOnBlur: true,
 
         tabBarIcon: ({ focused, color, size }) => {
           const icon = icons[route.name];
-          // Adicionado um fallback para garantir que o iconName nunca seja undefined.
-          // 'help-circle-outline' é um bom ícone padrão para casos não mapeados.
+          
           const iconName = icon ? (focused ? icon.focused : icon.unfocused) : "help-circle-outline";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -46,13 +42,13 @@ export default function RoutesTabs() {
           fontSize: 14,
           fontWeight: "bold",
         },
-        tabBarActiveTintColor: "tomato", // Cor do ícone e label da aba ativa
-        tabBarInactiveTintColor: "gray",  // Cor do ícone e label da aba inativa
+        tabBarActiveTintColor: "tomato", 
+        tabBarInactiveTintColor: "gray",  
 
-        // Estilos do cabeçalho (header) para as telas dentro das abas
+        
         headerStyle: {
           borderBottomColor: "gray",
-          borderWidth: 1, // Nota: borderWidth pode causar problemas se não for só no bottom. Considere borderBottomWidth
+          borderWidth: 1, 
           backgroundColor: "black",
         },
         headerTintColor: "tomato",
@@ -61,18 +57,20 @@ export default function RoutesTabs() {
         },
       })}
     >
-      {/*
-        Organizei a ordem para que 'Home' seja a primeira Screen declarada
-        para melhor legibilidade, já que é a initialRouteName.
-      */}
-      <Tab.Screen name="Home" component={Home} />
+      
+      
 
+      <Tab.Screen
+        name="Inicio"
+        component={HomeStack}
+        options={{ headerShown: false }} 
+        
+      />
       <Tab.Screen
         name="Biblioteca"
         component={BibliotecaStack}
-        options={{ headerShown: false }} // O Stack Navigator (BibliotecaStack) vai gerenciar seu próprio header
-        // REMOVIDOS OS LISTENERS COM CommonActions.reset para evitar crashes e comportamento inesperado.
-        // O `unmountOnBlur: true` já cuida de resetar o estado do stack ao sair e voltar.
+        options={{ headerShown: false }} 
+        
       />
 
       <Tab.Screen name="Atualizar" component={Atualizar} />
@@ -81,14 +79,14 @@ export default function RoutesTabs() {
         name="Historico"
         component={HistoricoStack}
         options={{ headerShown: false }}
-        // REMOVIDOS OS LISTENERS COM CommonActions.reset
+        
       />
 
       <Tab.Screen
         name="Navegar"
         component={NavigationStack}
         options={{ headerShown: false }}
-        // REMOVIDOS OS LISTENERS COM CommonActions.reset
+        
       />
     </Tab.Navigator>
   );

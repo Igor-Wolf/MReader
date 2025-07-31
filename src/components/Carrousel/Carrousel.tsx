@@ -104,8 +104,7 @@ export default function Carrousel({
 
   // Efeito para rolar o carrossel para a primeira página real (índice 1)
   useEffect(() => {
-    // Só tenta rolar se os dados do capítulo estão carregados, a primeira imagem está pronta
-    // a lista tem páginas de conteúdo, e ainda não rolou para este capítulo
+    
     if (
       chapterDataLoaded && // Espera o `Reader` sinalizar que os dados estão prontos
       firstImageReady &&
@@ -145,7 +144,7 @@ export default function Carrousel({
       alert("Não há próximo capítulo");
     } else {
       await nextPage(); // Chama a função passada pelo Reader
-      // Não precisa setar o índice aqui, o useEffect que detecta a mudança de capítulo fará isso.
+     
     }
   }, [nextPage, mangaAll.nextChapter?.id]); // Adicionado id como dependência
 
@@ -155,7 +154,7 @@ export default function Carrousel({
       alert("Não há capítulo anterior");
     } else {
       await prevPage(); // Chama a função passada pelo Reader
-      // Não precisa setar o índice aqui, o useEffect que detecta a mudança de capítulo fará isso.
+      
     }
   }, [prevPage, mangaAll.prevChapter?.id]); // Adicionado id como dependência
 

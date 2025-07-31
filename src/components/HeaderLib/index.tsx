@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { CharCount } from "../../utils/caracterCounter";
 import {
-  BackButton,
-  BottomBox,
   BoxSearch,
-  Button,
   ButtonSearch,
-  ButtonText,
   HeaderBox,
   HeaderTitle,
   InputBox,
@@ -16,14 +12,9 @@ import {
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function HeaderExtention({
-  name,
-  setFilter,
-  
-}: any) {
+export default function HeaderExtention({ name, setFilter }: any) {
   const [isSearching, setIsSearching] = useState(false);
-    const [imputText, setInputText] = useState("")
-
+  const [imputText, setInputText] = useState("");
 
   const onPressSearch = () => {
     setFilter(imputText);
@@ -34,7 +25,7 @@ export default function HeaderExtention({
   };
   const handlePressRemoveSearch = () => {
     setIsSearching(false);
-    setFilter("")
+    setFilter("");
   };
 
   return (

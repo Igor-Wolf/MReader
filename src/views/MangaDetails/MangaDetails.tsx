@@ -1,6 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, Image, Text } from "react-native";
-import HeaderExtention from "../../components/HeaderExtentionFont";
 import {
   ButtonsSetings,
   ChapterBottomBox,

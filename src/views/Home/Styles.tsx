@@ -35,3 +35,16 @@ export const SubText = styled.Text`
     font-size: 16px;
 
 `
+
+export const ConfigButton = styled.Pressable`
+    
+
+    background-color: tomato;
+    border-radius: 10px;
+    margin-top:20px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+
+
+`

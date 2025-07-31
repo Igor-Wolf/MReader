@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, Dimensions, ActivityIndicator, Text } from "react-native";
 import { Zoomable, ZOOM_TYPE } from "@likashefqet/react-native-image-zoom";
-import { Indicator } from "./styled"; // Assumindo seu styled component para o indicador
-import { Image } from "expo-image"; // Usando expo-image para melhor performance
-
+import { Indicator } from "./styled"; 
+import { Image } from "expo-image"; 
 type ZoomableImageProps = {
   uri: string;
   simultaneousHandlers?: any;
