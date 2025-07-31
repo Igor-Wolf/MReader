@@ -11,6 +11,8 @@ export const MainText = styled.Text`
   color: white;
   font-size: 20px;
   padding: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
   text-align: center;
 `;
 export const ButtonText = styled.Text`
@@ -23,7 +25,8 @@ export const ButtonText = styled.Text`
 export const NormalText = styled.Text`
   color: gray;
   font-size: 16px;
-  padding:5px;
+  padding:10px;
+  text-align: center;
 `;
 
 

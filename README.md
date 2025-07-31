@@ -7,7 +7,7 @@ Leitor de quadrinhos criado em React Native com Expo (em Desenvolvimento)
 
 
 
-- O APk completo pode ser baixado [aqui](https://github.com/Igor-Wolf/MReader/releases/download/v0.8/MReader.apk).
+- O APk completo pode ser baixado [aqui](https://github.com/Igor-Wolf/MReader/releases/download/v0.8.1/MReader.apk).
 
 
 

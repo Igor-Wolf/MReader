@@ -1,4 +1,4 @@
-export async function createReadChapter({
+export async function createReadChapter(realm: any,{
   idChap,
   idFont,
   idManga,
