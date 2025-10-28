@@ -3,7 +3,7 @@ Leitor de quadrinhos criado em React Native com Expo (em Desenvolvimento)
 
 
 
-![Organização dos Arquivos](./cover.png)
+![Organização dos Arquivos](https://github.com/user-attachments/assets/2350fa77-5c6b-47d3-a7aa-40f3fcd1883a)
 
 
 
