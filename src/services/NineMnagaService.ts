@@ -10,6 +10,7 @@ import {
 } from "../Models/MangaModel";
 import { parse, format } from "date-fns";
 import { GetMangaChapterListHqNow } from "./HqNowService";
+import { DateConvertNineManga } from "../utils/convertDate";
 
 const BASE_URL = "https://br.ninemanga.com";
 
@@ -249,8 +250,12 @@ export const GetMangaChapterListNineManga = async (idManga: string) => {
 
     const $ = cheerio.load(html);
 
-    const chapters: Array<{ name: string; url: string; date?: string }> = [];
 
+    let titlePage = $('h1[itemprop="name"]').text().trim();
+    titlePage = titlePage.replace("Manga", "").trim()
+    
+    const chapters: Array<{ name: string; url: string; date?: string; realTitle: string }> = [];
+    
     $("ul.sub_vol_ul > li").each((_, el) => {
       const chapterAnchor = $(el).find("a.chapter_list_a");
       const name = chapterAnchor.text().trim();
@@ -258,10 +263,12 @@ export const GetMangaChapterListNineManga = async (idManga: string) => {
 
       // --- CORREÇÃO AQUI ---
       // Busque o span adjacente DENTRO do contexto do 'el' atual
-      const dateText = $(el).find(".page_choose + span").text().trim();
+      const dateText = $(el).find("span").text().trim();
+      const dataFormatada = DateConvertNineManga(dateText);
       // --- FIM DA CORREÇÃO ---
 
-      chapters.push({ name, url, date: null });
+      
+      chapters.push({ name, url, date: dataFormatada, realTitle: titlePage });
     });
 
     const newChapterList: MangaChapterModel[] = [];
@@ -272,7 +279,11 @@ export const GetMangaChapterListNineManga = async (idManga: string) => {
         // O `id` do capítulo pode ser usado para extrair o número do capítulo.
         const chapterMatch = chap.name.match(/(\d+(\.\d+)?)$/); // Exemplo: pega o número no final do título
         const chapterNumber = chapterMatch ? parseFloat(chapterMatch[1]) : null;
-        const auxiName = chap.name.replace(/\s\d+(\.\d+)?$/, "").trim();
+        let auxiName = chap.name.replace(/\s\d+(\.\d+)?$/, "").trim();
+        auxiName = auxiName.replaceAll(chap.realTitle, "").trim();
+
+        const realTitle = chap.realTitle
+        //console.log(auxiName, "||||||", realTitle)
         newChapterList.push({
           id: chap.url,
           volume: null, // Pode precisar de outro seletor para volume se ele existir
@@ -307,8 +318,9 @@ export const GetPagesListNineManga = async (
   try {
     // 1. Baixa a página do capítulo
     const res = await fetchWithNativeGet(idChap, {
-      "User-Agent": "Mozilla/5.0",
-      "Accept-Language": "en-US,en;q=0.9",
+      "Accept-Language": "es-ES,es;q=0.9,en;q=0.8,gl;q=0.7",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:75.0) Gecko/20100101 Firefox/75.0",
     });
 
     if (res.status !== 200 || !res.body) {
@@ -335,7 +347,9 @@ export const GetPagesListNineManga = async (
     for (const pageUrl of uniquePageUrls) {
       const pageRes = await fetchWithNativeGet(pageUrl, {
         Referer: `${BASE_URL}/`,
-        "User-Agent": "Mozilla/5.0",
+        "Accept-Language": "es-ES,es;q=0.9,en;q=0.8,gl;q=0.7",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:75.0) Gecko/20100101 Firefox/75.0",
       });
 
       if (pageRes.status !== 200 || !pageRes.body) {
@@ -349,6 +363,7 @@ export const GetPagesListNineManga = async (
       if (imgUrl) {
         imageUrls.push(imgUrl);
       }
+      // await new Promise(r => setTimeout(r, 1200));
     }
     return imageUrls;
   } catch (error) {
@@ -381,7 +396,6 @@ export const GetPagesListPrevChapterNineManga = async (
     const response = await GetPagesListNineManga(nextChapter.id);
 
     if (response) {
-
       const pageList: MangaPage[] = response;
 
       return {

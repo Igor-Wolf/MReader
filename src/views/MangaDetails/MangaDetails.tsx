@@ -37,8 +37,9 @@ import HeaderChapters from "../../components/HeaderChapters";
 import { createManga } from "../../database/Crud/manga";
 import { useRealm } from "../../context/RealmContext";
 import ChapterPopup from "../../components/ChapterPopup";
-import { toggleReadChapter } from "../../database/Crud/readChapter"; 
+import { toggleReadChapter } from "../../database/Crud/readChapter";
 import { Picker } from "@react-native-picker/picker";
+import { createChapterAll, deleteAllChaptersAll } from "../../database/Crud/allChapters";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -124,6 +125,7 @@ export default function MangaDetails() {
   };
 
   const handlePressAdd = async () => {
+  try {
     const response: string = await createManga(realm, {
       id: manga.id,
       idFont: manga.idFont,
@@ -131,10 +133,34 @@ export default function MangaDetails() {
       coverImage: manga.coverImage,
     });
 
+    if (response === "Adicionado") {
+      for (const chap of chapterList) {
+        const chapterData = {
+          idChap: chap.id?.toString(),
+          idFont: manga.idFont,
+          idManga: manga.id?.toString(),
+          titleManga: manga.slug,
+          coverImage: manga.coverImage,
+          chapterNumber: chap.chapter?.toString(),
+          title: chap.title,
+        };
+
+        const message = await createChapterAll(realm, chapterData);
+        // Você pode tratar ou armazenar a `message` aqui, se necessário
+      }
+    } else {
+      await deleteAllChaptersAll(realm)
+    }
+
     if (response) {
       alert(response);
     }
-  };
+  } catch (error) {
+    console.error("Erro ao adicionar manga ou capítulos:", error);
+    alert("Ocorreu um erro. Tente novamente.");
+  }
+};
+
 
   useEffect(() => {
     refreshPage();
@@ -218,15 +244,27 @@ export default function MangaDetails() {
                 <ChapterTextTop>Ch.{item.chapter}</ChapterTextTop>
               )}
               {item.title && (
-                <ChapterTextTop numberOfLines={1} ellipsizeMode="tail" style={{flex: 1}}>{item.title}</ChapterTextTop>
+                <ChapterTextTop
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{ flex: 1 }}
+                >
+                  {item.title}
+                </ChapterTextTop>
               )}
             </ChapterTopBox>
             <ChapterBottomBox>
               <ChapterTextBottom>
-                {item.date ? DateConvert(item.date) : null}
+                {item.date ? item.date : null}
               </ChapterTextBottom>
               <ChapterTextBottom> - </ChapterTextBottom>
-              <ChapterTextBottom numberOfLines={1} ellipsizeMode="tail" style={{flex: 1}}>{item.scanName}</ChapterTextBottom>
+              <ChapterTextBottom
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{ flex: 1 }}
+              >
+                {item.scanName}
+              </ChapterTextBottom>
             </ChapterBottomBox>
           </ChapterBox>
         ))}

@@ -6,6 +6,7 @@ import NavigationStack from "./NavigationStack";
 import BibliotecaStack from "./BibliotecaStack";
 import HistoricoStack from "./HistoricoStack";
 import HomeStack from "./HomeStack";
+import AtualizationStack from "./AtualizationStack";
 
 
 const Tab = createBottomTabNavigator();
@@ -73,8 +74,13 @@ export default function RoutesTabs() {
         
       />
 
-      <Tab.Screen name="Atualizar" component={Atualizar} />
-
+      
+      <Tab.Screen
+        name="Atualizar"
+        component={AtualizationStack}
+        options={{ headerShown: false }}
+        
+      />
       <Tab.Screen
         name="Historico"
         component={HistoricoStack}

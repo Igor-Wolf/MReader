@@ -2,7 +2,7 @@
   "expo": {
     "name": "MReader",
     "slug": "MReader",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",

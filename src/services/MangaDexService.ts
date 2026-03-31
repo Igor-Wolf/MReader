@@ -6,6 +6,7 @@ import {
   MangaPage,
   NextPrevMangaPage,
 } from "../Models/MangaModel";
+import { DateConvert } from "../utils/convertDate";
 
 export const GetAllMangaMangaDex = async (
   pagination: number,
@@ -29,7 +30,7 @@ export const GetAllMangaMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? "No Title",
+        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
         coverImage: imageUrl,
       });
     });
@@ -67,7 +68,7 @@ export const GetPopularMangaMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? "No Title",
+        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
         coverImage: imageUrl,
       });
     });
@@ -107,7 +108,7 @@ export const GetMangaByNameMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? "No Title",
+        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
         coverImage: imageUrl,
       });
     });
@@ -188,12 +189,14 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
 
     // Preenche a lista com os dados no formato desejado
     ChapterList.forEach((chap: any) => {
+      const dateConvert = DateConvert(chap.attributes.publishAt);
+
       newChapterList.push({
         id: chap.id,
         volume: chap.attributes.volume ?? null,
         chapter: chap.attributes.chapter ?? null,
         title: chap.attributes.title ?? null,
-        date: chap.attributes.publishAt ?? null,
+        date: dateConvert ?? null,
         scanName:
           chap.relationships?.find(
             (rel: any) => rel.type === "scanlation_group"
@@ -247,12 +250,14 @@ export const GetMangaChapterListByLangMangaDex = async (
 
     // Processa os capítulos e preenche a lista com os dados necessários
     ChapterList.forEach((chap: any) => {
+      const dateConvert = DateConvert(chap.attributes.publishAt);
+
       newChapterList.push({
         id: chap.id,
         volume: chap.attributes.volume ?? null,
         chapter: chap.attributes.chapter ?? null,
         title: chap.attributes.title ?? null,
-        date: chap.attributes.publishAt ?? null,
+        date: dateConvert ?? null,
         scanName:
           chap.relationships?.find(
             (rel: any) => rel.type === "scanlation_group"
@@ -403,7 +408,8 @@ export const GetMangaChapterListAllLangsMangaDex = async (
   idManga: string,
   idChap: string
 ) => {
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   const resoponseChapter = await MangaDexApi.get(`/chapter/${idChap}`);
 
   let lang = resoponseChapter.data.data.attributes.translatedLanguage;
