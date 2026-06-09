@@ -9,6 +9,7 @@ import {
   GetMangaByNameMangaDex,
   GetPopularMangaMangaDex,
 } from "../../services/MangaDexService";
+import { GetAllMangaMangaflix, GetMangaByNameMangaflix, GetPopularMangaMangaflix } from "../../services/MangaflixService";
 import { GetAllMangaNimeMnaga, GetMangaByNameNineManga, GetPopularMangaNineManga } from "../../services/NineMnagaService";
 
 export const GetAllManga = async (id: number, pagination: number) => {
@@ -19,6 +20,8 @@ export const GetAllManga = async (id: number, pagination: number) => {
       return await GetAllMangaHqNow(pagination, id);
     case 3:
       return await GetAllMangaNimeMnaga(pagination, id);
+    case 4:
+      return await GetAllMangaMangaflix(pagination, id);
 
     default:
       return [];
@@ -32,6 +35,8 @@ export const GetPopularManga = async (id: number, pagination: number) => {
       return await GetPopularMangaHqNow(pagination, id);
     case 3:
       return await GetPopularMangaNineManga(pagination, id);
+    case 4:
+      return await GetPopularMangaMangaflix(pagination, id);
 
     default:
       return [];
@@ -49,6 +54,8 @@ export const GetMangaByName = async (
       return await GetMangaByNameHqNow(pagination, id, slug);
     case 3:
       return await GetMangaByNameNineManga(pagination, id, slug);
+    case 4:
+      return await GetMangaByNameMangaflix(pagination, id, slug);
 
     default:
       return [];

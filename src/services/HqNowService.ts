@@ -317,8 +317,6 @@ export const GetMangaChapterListHqNow = async (idManga: string) => {
       }
     );
 
-    // O código Kotlin reverte a ordem da lista.
-    // Se você quer a ordem dos capítulos como no Tachiyomi (geralmente do mais recente para o mais antigo), use o sort:
 
     // Ordenar do capítulo mais recente para o mais antigo (descendente)
     newChapterList.sort((a, b) => {

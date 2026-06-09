@@ -8,6 +8,7 @@ import {
   GetPagesListNextChapterMangaDex,
   GetPagesListPrevChapterMangaDex,
 } from "../../services/MangaDexService";
+import { GetPagesListMangaflix, GetPagesListNextChapterMangaflix, GetPagesListPrevChapterMangaflix } from "../../services/MangaflixService";
 import {
   GetPagesListNextChapterNineManga,
   GetPagesListNineManga,
@@ -22,6 +23,8 @@ export const GetPagesList = async (idFont: number, idManga: string | null) => {
       return await GetPagesListHqNow(idManga);
     case 3:
       return await GetPagesListNineManga(idManga);
+    case 4:
+      return await GetPagesListMangaflix(idManga);
 
     default:
       return null;
@@ -40,6 +43,8 @@ export const GetNextPagesList = async (
       return await GetPagesListNextChapterHqNow(idChap, idManga);
     case 3:
       return await GetPagesListNextChapterNineManga(idChap, idManga);
+    case 4:
+      return await GetPagesListNextChapterMangaflix(idChap, idManga);
 
     default:
       return null;
@@ -58,6 +63,8 @@ export const GetPrevPagesList = async (
       return await GetPagesListPrevChapterHqNow(idChap, idManga);
     case 3:
       return await GetPagesListPrevChapterNineManga(idChap, idManga);
+    case 4:
+      return await GetPagesListPrevChapterMangaflix(idChap, idManga);
 
     default:
       return null;

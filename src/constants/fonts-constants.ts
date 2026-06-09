@@ -17,6 +17,10 @@ export const FontsConstants = (): FontsConstantsModel[] => {
       idFont: 3,
       slug: "NineManga",
     },
+    {
+      idFont: 4,
+      slug: "Mangaflix",
+    },
   ];
 
   return fontList;

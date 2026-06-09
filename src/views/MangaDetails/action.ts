@@ -7,6 +7,7 @@ import {
   GetMangaChapterListByLangMangaDex,
   GetMangaChapterListMangaDex,
 } from "../../services/MangaDexService";
+import { GetMangaByIDMangaflix, GetMangaChapterListMangaflix } from "../../services/MangaflixService";
 import {
   GetMangaByIDNineManga,
   GetMangaChapterListNineManga,
@@ -20,6 +21,8 @@ export const GetMangaDetails = async (idFont: number, idManga: string) => {
       return await GetMangaByIDHqNow(idManga);
     case 3:
       return await GetMangaByIDNineManga(idManga);
+    case 4:
+      return await GetMangaByIDMangaflix(idManga);
 
     default:
       return null;
@@ -33,6 +36,8 @@ export const GetChapterList = async (idFont: number, idManga: string) => {
       return await GetMangaChapterListHqNow(idManga);
     case 3:
       return await GetMangaChapterListNineManga(idManga);
+    case 4:
+      return await GetMangaChapterListMangaflix(idManga);
 
     default:
       return null;
