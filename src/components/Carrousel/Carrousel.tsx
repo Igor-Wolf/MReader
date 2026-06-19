@@ -10,7 +10,8 @@ import {
   Text,
   InteractionManager,
   StyleSheet,
-  useWindowDimensions, // Alterado: Hook oficial e seguro
+  useWindowDimensions,
+  Platform, // Adicionado para otimização de renderização cross-platform
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import type { ICarouselInstance } from "react-native-reanimated-carousel";
@@ -85,7 +86,6 @@ export default function Carrousel({
   chapterDataLoaded,
   onCarouselReady,
 }: CarrouselProps) {
-  // Captura dinâmica segura para a Nova Arquitetura
   const { width, height } = useWindowDimensions();
 
   const isZoomedShared = useSharedValue(false);
@@ -331,17 +331,6 @@ export default function Carrousel({
     );
   }, [prevPageHandler, nextPageHandler, sepiaActive, darkActive, filterOpacity, height]);
 
-  const getItemLayout = useCallback((data: any, index: number) => {
-    let currentHeight = height;
-    if (data[index]?.type === "header") currentHeight = 200;
-    if (data[index]?.type === "footer") currentHeight = 250;
-    return {
-      length: currentHeight,
-      offset: currentHeight * index,
-      index,
-    };
-  }, [height]);
-
   return (
     <>
       {!chapterDataLoaded || (readingMode === "horizontal" && extendedList.length === 0) ? (
@@ -377,15 +366,15 @@ export default function Carrousel({
             renderItem={renderWebtoonItem}
             keyExtractor={(item, index) => `wt-item-${index}`}
             showsVerticalScrollIndicator={false}
-            style={styles.flatListBase}
+            style={[styles.flatListBase, animatedFlatListStyle]}
             contentContainerStyle={styles.flatListContent}
-            style={[animatedFlatListStyle]} 
-            getItemLayout={getItemLayout}
-            removeClippedSubviews={true}
-            initialNumToRender={2}
-            maxToRenderPerBatch={2}
-            windowSize={3}
-            updateCellsBatchingPeriod={50}
+            
+            // Otimizações de renderização nativa aplicadas para o modo vertical de Webtoon:
+            removeClippedSubviews={Platform.OS === 'android'} // Seguro em listas dinâmicas no Android, evita quebra no iOS
+            initialNumToRender={4} // Renderização inicial controlada
+            maxToRenderPerBatch={4} // Carregamento progressivo para evitar telas brancas
+            windowSize={5} // Viewport de carregamento estendido preventivo
+            updateCellsBatchingPeriod={30} // Renderização mais ágil em scroll rápido
           />
         </GestureDetector>
       )}

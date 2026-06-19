@@ -40,6 +40,7 @@ import ChapterPopup from "../../components/ChapterPopup";
 import { toggleReadChapter } from "../../database/Crud/readChapter";
 import { Picker } from "@react-native-picker/picker";
 import { createChapterAll, deleteAllChaptersAll } from "../../database/Crud/allChapters";
+import DownloadButton from "../../components/DownloadButton";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -60,7 +61,7 @@ export default function MangaDetails() {
   };
 
   const fetchChapterList = async () => {
-    const response = await GetChapterList(manga.idFont, manga.id);
+    const response = await GetChapterList(realm ,manga.idFont, manga.id);
     if (response) {
       return response;
     }
@@ -266,6 +267,7 @@ export default function MangaDetails() {
                 {item.scanName}
               </ChapterTextBottom>
             </ChapterBottomBox>
+            <DownloadButton fontID={ manga.idFont} mangaID={manga.id} chapterID={item.id} chapterAll={item}></DownloadButton>
           </ChapterBox>
         ))}
       </ScrollContainer>

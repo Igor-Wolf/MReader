@@ -24,6 +24,14 @@ export interface MangaChapterModel {
   date: string | null;
   scanName: string | null;
 }
+export interface MangaChapterModelDownloaded {
+  id: string;
+  volume: number | null;
+  chapter: number | null;
+  title: string | null;
+  date: string | null;
+  scanName: string | null;
+}
 
 export interface MangaPage {
   url: string;

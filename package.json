@@ -1,6 +1,6 @@
 {
   "name": "teste-app",
-  "version": "0.8.5",
+  "version": "0.9",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",

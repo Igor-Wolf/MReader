@@ -276,7 +276,7 @@ export const GetMangaChapterListHqNow = async (idManga: string) => {
 
   if (isNaN(idMangaNumber)) {
     console.error("ID do mangá inválido.");
-    return null;
+    return [];
   }
 
   const payload = {
@@ -292,7 +292,7 @@ export const GetMangaChapterListHqNow = async (idManga: string) => {
     // Verificar o status da resposta antes de processar
     if (response.status !== 200) {
       console.error("Erro na resposta da API:", response.status);
-      return null;
+      return [];
     }
 
     // Acessar a lista de capítulos corretamente (getHqsById retorna um array)
@@ -300,7 +300,7 @@ export const GetMangaChapterListHqNow = async (idManga: string) => {
 
     if (!mangaData || !mangaData.capitulos) {
       console.error("Dados de capítulos não encontrados na resposta.");
-      return null;
+      return [];
     }
 
     // 3. Mapear a lista de capítulos para MangaChapterModel
@@ -332,7 +332,7 @@ export const GetMangaChapterListHqNow = async (idManga: string) => {
     return newChapterList;
   } catch (error) {
     console.error("Erro ao buscar os capítulos da HQ:", error);
-    return null;
+    return [];
   }
 };
 

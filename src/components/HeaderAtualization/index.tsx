@@ -8,7 +8,7 @@ export default function HeaderAtualization({ name }: any) {
   const [isSearching, setIsSearching] = useState(false);
 
   const handlePress = () => {
-    alert("clicou");
+    alert("Em desenvolvimento");
   };
 
   return (

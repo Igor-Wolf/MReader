@@ -15,11 +15,19 @@ export const FontsConstants = (): FontsConstantsModel[] => {
     },
     {
       idFont: 3,
-      slug: "NineManga",
+      slug: "NineManga *",
     },
     {
       idFont: 4,
       slug: "Mangaflix",
+    },
+    {
+      idFont: 5,
+      slug: "Niadd *",
+    },
+    {
+      idFont: 6,
+      slug: "NovelCool *",
     },
   ];
 
