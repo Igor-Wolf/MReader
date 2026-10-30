@@ -100,15 +100,27 @@ export const GetNextPagesList = async (realm: any, idFont: number, idChap: strin
     console.warn("⚠️ Não foi possível buscar o próximo capítulo online (dispositivo pode estar offline).");
   }
 
-  // Fallback se estiver 100% offline e a API falhar: tentamos deduzir pelo Realm se houver um próximo salvo
+  // ✅ CORREÇÃO #2: Fallback offline agora ordena capítulos por chapterNumber para garantir sequência correta
   if (!response && realm && !realm.isClosed) {
-    // Busca capítulos desta mesma fonte e mangá para tentar achar o próximo localmente
     const savedChapters = realm.objects("DownloadChapter")
       .filtered("idFont == $0 AND idManga == $1", idFont, idManga);
     
-    // Procura um capítulo cujo ID seja diferente do atual (uma aproximação segura para cenários sem rede)
-    const nextLocal = savedChapters.find((c: any) => c.id !== idChap); 
-    if (nextLocal) {
+    // 🔑 CRÍTICO: Ordena capítulos antes de buscar próximo para manter sequencialidade!
+    const sortedChapters = Array.from(savedChapters).sort((a, b) => {
+      const chapterA = parseFloat(String(a.chapterNumber || ""));
+      const chapterB = parseFloat(String(b.chapterNumber || ""));
+      
+      if (isNaN(chapterA) && isNaN(chapterB)) return 0;
+      if (isNaN(chapterA)) return 1;
+      if (isNaN(chapterB)) return -1;
+      
+      // Ordenação crescente para leitura sequencial correta (ex: Cap.1, Cap.2, Cap.3...)
+      return chapterA - chapterB;
+    });
+
+    const currentChapterIndex = sortedChapters.findIndex(c => c.id === idChap);
+    if (currentChapterIndex !== -1 && currentChapterIndex + 1 < sortedChapters.length) {
+      const nextLocal = sortedChapters[currentChapterIndex + 1];
       response = { id: nextLocal.id, title: nextLocal.title, chapterNumber: nextLocal.chapterNumber, list: [] };
     }
   }
@@ -142,8 +154,23 @@ export const GetPrevPagesList = async (realm: any, idFont: number, idChap: strin
   if (!response && realm && !realm.isClosed) {
     const savedChapters = realm.objects("DownloadChapter")
       .filtered("idFont == $0 AND idManga == $1", idFont, idManga);
-    const prevLocal = savedChapters.find((c: any) => c.id !== idChap);
-    if (prevLocal) {
+    
+    // 🔑 ORDENA CAPÍTULOS ANTES DE BUSCAR ANTERIOR PARA MANter SEQüENCIALIDADE!
+    const sortedChapters = Array.from(savedChapters).sort((a, b) => {
+      const chapterA = parseFloat(String(a.chapterNumber || ""));
+      const chapterB = parseFloat(String(b.chapterNumber || ""));
+      
+      if (isNaN(chapterA) && isNaN(chapterB)) return 0;
+      if (isNaN(chapterA)) return 1;
+      if (isNaN(chapterB)) return -1;
+      
+      // Ordenação crescente para leitura sequencial correta
+      return chapterA - chapterB;
+    });
+
+    const currentChapterIndex = sortedChapters.findIndex(c => c.id === idChap);
+    if (currentChapterIndex !== -1 && currentChapterIndex > 0) {
+      const prevLocal = sortedChapters[currentChapterIndex - 1];
       response = { id: prevLocal.id, title: prevLocal.title, chapterNumber: prevLocal.chapterNumber, list: [] };
     }
   }

@@ -13,10 +13,10 @@ export const FontsConstants = (): FontsConstantsModel[] => {
       idFont: 2,
       slug: "HqNow",
     },
-    {
-      idFont: 3,
-      slug: "NineManga *",
-    },
+    // {
+    //   idFont: 3,
+    //   slug: "NineManga *",
+    // },
     {
       idFont: 4,
       slug: "Mangaflix",

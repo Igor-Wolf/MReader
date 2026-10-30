@@ -138,3 +138,19 @@ export const StyledPicker = styled(Picker)`
   border-radius: 8px;
   color: white;
 `;
+
+
+export const OrderChapterBox =styled.View`
+  
+  flex-direction: row;
+
+`
+
+export const TextOrderChapterBox = styled.Text`
+  
+  color: tomato;
+  margin-right: -15px;
+  z-index: 4;
+
+
+`

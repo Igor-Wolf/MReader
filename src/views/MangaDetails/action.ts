@@ -87,15 +87,45 @@ export const GetChapterList = async (
   }
 
   // 2. Usa a nova função que traz tudo mastigado do Realm
-  const resOffline = getDownloadedChaptersByManga(realm, idFont, String(idManga));
+  const resultsOffline = getDownloadedChaptersByManga(realm, idFont, String(idManga));
 
-  // 3. Mesclar as duas listas sem duplicar
-  // Se o capítulo já existe no offline, mantemos a versão offline (que tem o isOffline: true)
-  const mergedChapters = [...resOffline];
+  // ✅ CONVERTE PARA ARRAY e ORDENA (depois podemos ordenar)
+  const offlineArray: any[] = Array.from(resultsOffline || []);
+  
+  // Ordena offline decrescente para manter capítulos mais recentes primeiro
+  offlineArray.sort((a, b) => {
+    const chapterA = parseFloat(String(a.chapterNumber || ""));
+    const chapterB = parseFloat(String(b.chapterNumber || ""));
 
-  resWeb.forEach((webChap: any) => {
+    if (isNaN(chapterA) && isNaN(chapterB)) return 0;
+    if (isNaN(chapterA)) return 1;
+    if (isNaN(chapterB)) return -1;
+
+    // Decrescente para UI consistente
+    return chapterB - chapterA;
+  });
+
+  // Ordena resWeb também
+  const onlineArray: any[] = Array.from(resWeb || []);
+  
+  onlineArray.sort((a, b) => {
+    const chapterA = parseFloat(String(a.chapter || ""));
+    const chapterB = parseFloat(String(b.chapter || ""));
+
+    if (isNaN(chapterA) && isNaN(chapterB)) return 0;
+    if (isNaN(chapterA)) return 1;
+    if (isNaN(chapterB)) return -1;
+
+    // Decrescente para manter consistência UI
+    return chapterB - chapterA;
+  });
+
+  // Mesclar: offline primeiro, depois web não baixado
+  const mergedChapters = [...offlineArray];
+
+  onlineArray.forEach((webChap: any) => {
     // Verifica se o capítulo da web já foi baixado (comparando pelo id do capítulo)
-    const alreadyDownloaded = resOffline.some(
+    const alreadyDownloaded = offlineArray.some(
       (offChap: any) => offChap.id == webChap.id,
     );
 
@@ -107,29 +137,22 @@ export const GetChapterList = async (
     }
   });
 
-  // 4. Opcional: Ordenar os capítulos (ex: por número do capítulo)
-
-  // 4. Ordenação Decrescente Blindada
+  // 🔑 CORREÇÃO FINAL: Ordenação decrescente MÍNIMA após merge para garantir ordem correta na UI
   mergedChapters.sort((a, b) => {
-    // Força virar string e limpa espaços vazios antes do parseFloat, tratando nulos
     const chapterA = parseFloat(String(a.chapter || ""));
     const chapterB = parseFloat(String(b.chapter || ""));
 
-    // Se AMBOS forem NaN (ex: dois especiais), mantém a ordem original entre eles
     if (isNaN(chapterA) && isNaN(chapterB)) return 0;
-
-    // Se apenas o A for inválido, joga ele para o fim da lista
     if (isNaN(chapterA)) return 1;
-
-    // Se apenas o B for inválido, joga ele para o fim da lista
     if (isNaN(chapterB)) return -1;
 
-    // Ordenação decrescente padrão para números (ex: 50, 49, 48...)
+    // Ordenação DECRESCENTE para manter mais recentes primeiro na UI
     return chapterB - chapterA;
   });
 
+  // ✅ Retorna a lista mesclada e ordenada (offline primeiro, depois online adicionais)
   return mergedChapters;
-};
+}
 
 export const GetChapterListAnotherLanguage = async (
   idFont: number,
