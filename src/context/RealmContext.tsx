@@ -5,6 +5,7 @@ import { ChapterSchema } from '../database/schemas/ChapterSchema';
 import { ReadChapterSchema } from '../database/schemas/ReadChapterSchema'; 
 import { AllChapterSchema } from '../database/schemas/AllChapterSchema';
 import { DownloadChapterSchema } from '../database/schemas/DownloadChapterSchema';
+import { UpdateChapterSchema } from '../database/schemas/UpdateChapterSchema';
 
 type RealmContextType = {
   realm: Realm | null;
@@ -33,7 +34,7 @@ export const RealmProvider = ({ children }: { children: React.ReactNode }) => {
 
       realmInstance = await Realm.open({
         path: 'manga-app.realm',
-        schema: [MangaSchema, ChapterSchema, ReadChapterSchema, AllChapterSchema, DownloadChapterSchema ],
+        schema: [MangaSchema, ChapterSchema, ReadChapterSchema, AllChapterSchema, DownloadChapterSchema, UpdateChapterSchema ],
         schemaVersion: 2, // Lembre-se de atualizar ao mudar schemas
         migration: (oldRealm, newRealm) => {
           if (oldRealm.schemaVersion < 2) {

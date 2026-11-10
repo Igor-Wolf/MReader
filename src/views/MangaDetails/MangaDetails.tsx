@@ -49,11 +49,14 @@ import { useRealm } from "../../context/RealmContext";
 import ChapterPopup from "../../components/ChapterPopup";
 import { toggleReadChapter } from "../../database/Crud/readChapter";
 import { Picker } from "@react-native-picker/picker";
-import {
-  createChapterAll,
-  deleteAllChaptersAll,
-} from "../../database/Crud/allChapters";
+import { deleteAllChaptersAll } from "../../database/Crud/allChapters";
 import DownloadButton from "../../components/DownloadButton";
+import {
+  createUpdateChapter,
+  deleteUpdateChapterByUidAll,
+  deleteUpdateChaptersAll,
+} from "../../database/Crud/updateChapters";
+import { FontsConstants } from "../../constants/fonts-constants";
 
 export default function MangaDetails() {
   const navigation = useNavigation();
@@ -70,6 +73,8 @@ export default function MangaDetails() {
 
   const [inLibrary, setInLibrary] = useState(false);
   const [orderChapterBox, setOrderChapterBox] = useState("Z-A");
+const [fontConstant, setFontConstant] = useState<FontsConstantsModel[]>(FontsConstants());  
+  
 
   // Função para verificar se o mangá já está na biblioteca
   const checkMangaInLibrary = async (): Promise<boolean> => {
@@ -196,7 +201,9 @@ export default function MangaDetails() {
       });
 
       if (response === "Adicionado") {
-        for (const chap of chapterList) {
+        const auxiList = [...chapterList];
+        auxiList.reverse();
+        for (const chap of auxiList) {
           const chapterData = {
             idChap: chap.id?.toString(),
             idFont: manga.idFont,
@@ -207,12 +214,18 @@ export default function MangaDetails() {
             title: chap.title,
           };
 
-          const message = await createChapterAll(realm, chapterData);
+          const message = await createUpdateChapter(realm, chapterData);
           // Você pode tratar ou armazenar a `message` aqui, se necessário
           setInLibrary(true);
         }
       } else {
-        await deleteAllChaptersAll(realm);
+        await Promise.all(
+          chapterList.map(async (item) => {
+            const uid = `${manga.idFont}:${manga.id}:${item.id}`;
+            await deleteUpdateChapterByUidAll(realm, uid);
+          }),
+        );
+
         setInLibrary(false);
       }
 
@@ -228,7 +241,6 @@ export default function MangaDetails() {
 
   const handleOrder = async (value) => {
     if (value != orderChapterBox) {
-      
       let sortedList = chapterList.reverse();
       setChapterList(sortedList);
     }
@@ -246,7 +258,7 @@ export default function MangaDetails() {
     if (manga?.idFont && manga?.id) {
       const uid = `${manga.idFont}:${String(manga.id)}`;
       console.log(`🔍 Verificando UID: ${uid}`);
-
+      
       // Verificação imediata no banco, sem aguardar outros processos
       checkMangaInLibrary()
         .then((exists) => {
@@ -297,6 +309,7 @@ export default function MangaDetails() {
             <NormalTextTop>Artist: {mangaDetails?.artist}</NormalTextTop>
             <NormalTextTop>Autor: {mangaDetails?.author}</NormalTextTop>
             <NormalTextTop>Year: {mangaDetails?.year}</NormalTextTop>
+            <NormalTextTop>Font: {fontConstant.find(item => item.idFont === manga.idFont)?.slug ?? ""}</NormalTextTop>
             <NormalTextTop>Status: {mangaDetails?.status}</NormalTextTop>
           </InfoContainer>
         </TopContainer>

@@ -8,21 +8,23 @@ import {
 } from "../Models/MangaModel";
 import { DateConvert } from "../utils/convertDate";
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const GetAllMangaMangaDex = async (
   pagination: number,
-  idFont: number
+  idFont: number,
 ) => {
   const page = pagination * 20 - 20;
 
   const response = await MangaDexApi.get(
-    `/manga?includes[]=author&includes[]=artist&includes[]=cover_art&limit=20&offset=40limit=20&offset=${page}`
+    `/manga?includes[]=author&includes[]=artist&includes[]=cover_art&limit=20&offset=40limit=20&offset=${page}`,
   );
   if (response.status === 200) {
     let mangaList = response.data.data;
     let returnList: MangaCoverModel[] = [];
     mangaList.forEach((manga: any) => {
       const cover = manga.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel: any) => rel.type === "cover_art",
       );
       const fileName = cover?.attributes?.fileName;
       const imageUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
@@ -30,7 +32,11 @@ export const GetAllMangaMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
+        slug:
+          manga.attributes.title.en ??
+          manga.attributes.altTitles.find((t) => t.en)?.en ??
+          Object.values(manga.attributes.title)[0] ??
+          "No Title",
         coverImage: imageUrl,
       });
     });
@@ -41,7 +47,7 @@ export const GetAllMangaMangaDex = async (
 };
 export const GetPopularMangaMangaDex = async (
   pagination: number,
-  idFont: number
+  idFont: number,
 ) => {
   const page = pagination * 20 - 20;
 
@@ -60,7 +66,7 @@ export const GetPopularMangaMangaDex = async (
     let returnList: MangaCoverModel[] = [];
     mangaList.forEach((manga: any) => {
       const cover = manga.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel: any) => rel.type === "cover_art",
       );
       const fileName = cover?.attributes?.fileName;
       const imageUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
@@ -68,7 +74,11 @@ export const GetPopularMangaMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
+        slug:
+          manga.attributes.title.en ??
+          manga.attributes.altTitles.find((t) => t.en)?.en ??
+          Object.values(manga.attributes.title)[0] ??
+          "No Title",
         coverImage: imageUrl,
       });
     });
@@ -80,7 +90,7 @@ export const GetPopularMangaMangaDex = async (
 export const GetMangaByNameMangaDex = async (
   pagination: number,
   idFont: number,
-  slug: string
+  slug: string,
 ) => {
   const page = pagination * 20 - 20;
 
@@ -100,7 +110,7 @@ export const GetMangaByNameMangaDex = async (
     let returnList: MangaCoverModel[] = [];
     mangaList.forEach((manga: any) => {
       const cover = manga.relationships.find(
-        (rel: any) => rel.type === "cover_art"
+        (rel: any) => rel.type === "cover_art",
       );
       const fileName = cover?.attributes?.fileName;
       const imageUrl = `https://uploads.mangadex.org/covers/${manga.id}/${fileName}`;
@@ -108,7 +118,11 @@ export const GetMangaByNameMangaDex = async (
       returnList.push({
         id: manga.id,
         idFont: idFont,
-        slug: manga.attributes.title.en ?? manga.attributes.altTitles.find(t => t.en)?.en ?? Object.values(manga.attributes.title)[0] ?? "No Title",
+        slug:
+          manga.attributes.title.en ??
+          manga.attributes.altTitles.find((t) => t.en)?.en ??
+          Object.values(manga.attributes.title)[0] ??
+          "No Title",
         coverImage: imageUrl,
       });
     });
@@ -119,20 +133,20 @@ export const GetMangaByNameMangaDex = async (
 };
 
 export const GetMangaByIDMangaDex = async (
-  idManga: string
+  idManga: string,
 ): Promise<MangaDetailsModel | null> => {
   try {
     const response = await MangaDexApi.get(
-      `/manga/${idManga}?includes[]=author&includes[]=artist`
+      `/manga/${idManga}?includes[]=author&includes[]=artist`,
     );
     if (response.status === 200) {
       const mangaData = response.data.data;
 
       const author = mangaData.relationships.find(
-        (r: any) => r.type === "author"
+        (r: any) => r.type === "author",
       );
       const artist = mangaData.relationships.find(
-        (r: any) => r.type === "artist"
+        (r: any) => r.type === "artist",
       );
       const tags = mangaData.attributes.tags;
       const newTags: string[] = [];
@@ -165,7 +179,7 @@ export const GetMangaByIDMangaDex = async (
 
 export const GetMangaChapterListMangaDex = async (idManga: string) => {
   const response = await MangaDexApi.get(
-    `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group&limit=100&offset=0`
+    `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group&limit=100&offset=0`,
   );
 
   const newChapterList: MangaChapterModel[] = [];
@@ -176,10 +190,12 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
 
     // Loop para iterar pelas páginas restantes
     for (let page = 1; page < totalPages; page++) {
+      await sleep(1500); // Espera 300ms antes da próxima requisição
+
       const responseFor = await MangaDexApi.get(
         `/manga/${idManga}/feed?translatedLanguage[]=en&includes[]=scanlation_group&limit=100&offset=${
           page * 100
-        }`
+        }`,
       );
 
       if (responseFor.status === 200) {
@@ -199,7 +215,7 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
         date: dateConvert ?? null,
         scanName:
           chap.relationships?.find(
-            (rel: any) => rel.type === "scanlation_group"
+            (rel: any) => rel.type === "scanlation_group",
           )?.attributes?.name ?? null,
       });
     });
@@ -223,10 +239,10 @@ export const GetMangaChapterListMangaDex = async (idManga: string) => {
 
 export const GetMangaChapterListByLangMangaDex = async (
   idManga: string,
-  lang: string
+  lang: string,
 ) => {
   const response = await MangaDexApi.get(
-    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`
+    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`,
   );
 
   const newChapterList: MangaChapterModel[] = [];
@@ -240,7 +256,7 @@ export const GetMangaChapterListByLangMangaDex = async (
       const responseFor = await MangaDexApi.get(
         `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=${
           page * 100
-        }`
+        }`,
       );
 
       if (responseFor.status === 200) {
@@ -260,7 +276,7 @@ export const GetMangaChapterListByLangMangaDex = async (
         date: dateConvert ?? null,
         scanName:
           chap.relationships?.find(
-            (rel: any) => rel.type === "scanlation_group"
+            (rel: any) => rel.type === "scanlation_group",
           )?.attributes?.name ?? null,
       });
     });
@@ -283,7 +299,7 @@ export const GetMangaChapterListByLangMangaDex = async (
 };
 
 export const GetPagesListMangaDex = async (
-  idChap: string
+  idChap: string,
 ): Promise<MangaPage[]> => {
   try {
     const response = await MangaDexApi.get(`/at-home/server/${idChap}`);
@@ -307,12 +323,12 @@ export const GetPagesListMangaDex = async (
 };
 export const GetPagesListNextChapterMangaDex = async (
   idChap: string,
-  idManga: string
+  idManga: string,
 ): Promise<NextPrevMangaPage | null> => {
   try {
     const responseListChapters = await GetMangaChapterListAllLangsMangaDex(
       idManga,
-      idChap
+      idChap,
     );
 
     if (!responseListChapters || responseListChapters.length === 0) {
@@ -320,7 +336,7 @@ export const GetPagesListNextChapterMangaDex = async (
     }
 
     const currentIndex = responseListChapters.findIndex(
-      (item) => item.id === idChap
+      (item) => item.id === idChap,
     );
 
     const nextChapter = responseListChapters[currentIndex - 1];
@@ -356,12 +372,12 @@ export const GetPagesListNextChapterMangaDex = async (
 };
 export const GetPagesListPrevChapterMangaDex = async (
   idChap: string,
-  idManga: string
+  idManga: string,
 ): Promise<NextPrevMangaPage | null> => {
   try {
     const responseListChapters = await GetMangaChapterListAllLangsMangaDex(
       idManga,
-      idChap
+      idChap,
     );
 
     if (!responseListChapters || responseListChapters.length === 0) {
@@ -369,7 +385,7 @@ export const GetPagesListPrevChapterMangaDex = async (
     }
 
     const currentIndex = responseListChapters.findIndex(
-      (item) => item.id === idChap
+      (item) => item.id === idChap,
     );
 
     const nextChapter = responseListChapters[currentIndex + 1];
@@ -406,16 +422,14 @@ export const GetPagesListPrevChapterMangaDex = async (
 
 export const GetMangaChapterListAllLangsMangaDex = async (
   idManga: string,
-  idChap: string
+  idChap: string,
 ) => {
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
   const resoponseChapter = await MangaDexApi.get(`/chapter/${idChap}`);
 
   let lang = resoponseChapter.data.data.attributes.translatedLanguage;
 
   const response = await MangaDexApi.get(
-    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`
+    `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=0`,
   );
 
   const newChapterList: MangaChapterModel[] = [];
@@ -431,7 +445,7 @@ export const GetMangaChapterListAllLangsMangaDex = async (
       const responseFor = await MangaDexApi.get(
         `/manga/${idManga}/feed?translatedLanguage[]=${lang}&includes[]=scanlation_group&limit=100&offset=${
           page * 100
-        }`
+        }`,
       );
 
       if (responseFor.status === 200) {
@@ -452,7 +466,7 @@ export const GetMangaChapterListAllLangsMangaDex = async (
         date: chap.attributes.publishAt ?? null,
         scanName:
           chap.relationships?.find(
-            (rel: any) => rel.type === "scanlation_group"
+            (rel: any) => rel.type === "scanlation_group",
           )?.attributes?.name ?? null,
       });
     });

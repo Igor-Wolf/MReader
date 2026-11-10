@@ -6,6 +6,7 @@ import { ChapterSchema } from './schemas/ChapterSchema';
 import { ReadChapterSchema } from './schemas/ReadChapterSchema';
 import { AllChapterSchema } from './schemas/AllChapterSchema';
 import { DownloadChapterSchema } from './schemas/DownloadChapterSchema';
+import { UpdateChapterSchema } from './schemas/UpdateChapterSchema';
 
 let realm: Realm;
 
@@ -13,7 +14,7 @@ export async function initRealm() {
   if (realm) return realm;
 
   realm = await Realm.open({
-    schema: [MangaSchema, ChapterSchema, ReadChapterSchema, AllChapterSchema, DownloadChapterSchema],
+    schema: [MangaSchema, ChapterSchema, ReadChapterSchema, AllChapterSchema, DownloadChapterSchema, UpdateChapterSchema],
     path: 'manga-app.realm',
   });
   return realm;
